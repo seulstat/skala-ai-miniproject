@@ -6,8 +6,6 @@ from datetime import date
 
 from contracts.schemas import UserProfile
 
-from .config import PERSONA_RULES_PATH  # TODO(A1): agent/config 대체 경로로 교체 (COACH_DATA_DIR 기반)
-
 ROUTER_PROMPT = """당신은 영어 면접 준비 도우미의 요청 분류기입니다. 사용자 입력을 하나로 분류하세요.
 - express: 한국어(또는 섞인) 문장을 면접·업무에서 영어로 어떻게 말할지 묻는 경우. "~영어로 뭐야" 없이 문장만 줘도 express.
 - answer: 면접 질문(영어 또는 한국어)을 주고 그에 대한 답변을 원하는 경우. "면접 질문:", 의문형 면접 질문.
@@ -67,8 +65,9 @@ def generator_prompt(profile: UserProfile, known: list[str], mode: str) -> str:
 - 문법적으로 정확하고 원어민이 실제로 쓰는 문장만 쓰세요."""
 
 
-def reviewer_prompt() -> str:
-    rules = PERSONA_RULES_PATH.read_text(encoding="utf-8")
+def reviewer_prompt(persona_rules: str) -> str:
+    """persona_rules: deps.paths.persona_rules 파일 내용 (호출부가 읽어서 넘긴다)."""
+    rules = persona_rules
     return f"""당신은 영어 면접 코치이자 지원자의 페르소나 검수자입니다.
 아래 페르소나 규칙으로 카드의 영어 표현(formal_expression, casual_expression, answer_draft, chunks)을 검사하세요.
 
