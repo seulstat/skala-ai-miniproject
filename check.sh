@@ -6,8 +6,8 @@
 set -uo pipefail
 cd "$(dirname "$0")"
 
-# ADR 검사(⑧) 활성 여부. Phase 0 M5에서 ADR 0001~0011 작성 후 1로 바꿨다.
-ADR_CHECK_ENABLED=0
+# ADR 검사(⑧) 활성 여부. Phase 0 M5에서 ADR 0001~0011 작성 후 활성화했다.
+ADR_CHECK_ENABLED=1
 MAX_LINES=200
 
 PY=.venv/bin/python; [ -x "$PY" ] || PY=python3

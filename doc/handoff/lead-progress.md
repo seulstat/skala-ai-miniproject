@@ -8,6 +8,7 @@
 | ~17:05 | M1 완료 | 19% | M1 구간 +3%p → Phase 0 전체 예상 3 ÷ 0.20 = 15%p (종료 예상 약 31%, 예산 40%p 이내) |
 | ~17:25 | M2 완료 | 23% | M2 +4%p (비중 25% 대비 예상 3.75%p, 정상) |
 | ~17:35 | M3 완료 | 24% | M3 +1%p |
+| ~17:50 | M4 완료 | 25% | M4 +1%p (누적 +9%p) |
 
 ## 마일스톤 상태
 
@@ -17,7 +18,7 @@
 | M2 | contracts/ | 완료 | `[lead] Phase 0 M2 ...` |
 | M3 | agent.md | 완료 | `[lead] Phase 0 M3 ...` |
 | M4 | check.sh | 완료 | `[lead] Phase 0 M4 ...` |
-| M5 | ADR 0001~0011 | 대기 | |
+| M5 | ADR 0001~0011 | 완료 | `[lead] Phase 0 M5 ...` |
 | M6 | worktree·검증·인수인계 | 대기 | |
 
 ## 사용자 지시 (상시)
@@ -60,5 +61,10 @@
 - 임시 브랜치 feat/core로 소유권 위반 검출 확인 (contracts 수정 FAIL, agent/ 수정·새 ADR 허용) 후 브랜치 삭제
 - `.forbidden_patterns.local`은 사용자가 로컬에 직접 작성 필요 (Lead는 private 서류를 읽지 않음)
 
+## M5 완료 항목
+- ADR 0001~0011 전부 전체 틀(배경·결정·대안 비교·결과, 기각 대안 포함)로 작성, 상태 Accepted
+- `doc/adr/README.md` 색인 + design.md ↔ ADR 대응표
+- check.sh `ADR_CHECK_ENABLED=1`, 통과(FAIL 0·WARN 0). 필수 제목 누락 ADR로 FAIL 검출 확인
+
 ## 다음 시작점
-- M5: ADR 0001~0011 + doc/adr/README.md 색인 → check.sh `ADR_CHECK_ENABLED=1`
+- M6: worktree 4개 + 각 setup_venv·check.sh, fake 스모크, `doc/handoff/lead.md`, 착수 프롬프트 초안(A1·A2·A4)
