@@ -112,13 +112,15 @@ bash sh/seed_sample.sh           # examples/sample_user → COACH_DATA_DIR (시�
 - [ ] 계약을 바꿔야 하면 수정하지 않고 Lead에 요청한다
 
 **작업 후**
-- [ ] `bash check.sh` 통과 (출력 원문을 보고에 붙인다)
+- [ ] `bash check.sh` 통과 (출력 원문을 보고에 붙인다). WARN은 허용, FAIL은 0개여야 한다
 - [ ] 자기 테스트 통과
 - [ ] `doc/handoff/<role>.md` 작성 (§8 양식)
 - [ ] 커밋 메시지에 관련 ADR 번호, AI 이름 없음
 - [ ] Lead에 보고 (한 일 / check.sh 결과 / 요청 사항)
 
 ## 8. 인수인계 노트 양식 (`doc/handoff/<role>.md`)
+
+파일 이름은 브랜치 접미사를 쓴다: `core.md`·`mcp.md`·`api.md`·`web.md` (Lead는 `lead.md`). `check.sh`는 자기 역할의 노트만 허용한다.
 
 노트는 **무엇을·어디에**(구현 안내)를 쓴다. **왜**는 ADR에 쓰고, 노트에는 링크만 건다.
 

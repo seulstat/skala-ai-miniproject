@@ -7,6 +7,7 @@
 | 16:37 | Phase 0 시작 (기준선) | 16% | 현재 창 재설정 19:50 (사용자 확인) |
 | ~17:05 | M1 완료 | 19% | M1 구간 +3%p → Phase 0 전체 예상 3 ÷ 0.20 = 15%p (종료 예상 약 31%, 예산 40%p 이내) |
 | ~17:25 | M2 완료 | 23% | M2 +4%p (비중 25% 대비 예상 3.75%p, 정상) |
+| ~17:35 | M3 완료 | 24% | M3 +1%p |
 
 ## 마일스톤 상태
 
@@ -15,7 +16,7 @@
 | M1 | 환경·복사·design 수정 | 완료 | `[lead] Phase 0 M1 ...` |
 | M2 | contracts/ | 완료 | `[lead] Phase 0 M2 ...` |
 | M3 | agent.md | 완료 | `[lead] Phase 0 M3 ...` |
-| M4 | check.sh | 대기 | |
+| M4 | check.sh | 완료 | `[lead] Phase 0 M4 ...` |
 | M5 | ADR 0001~0011 | 대기 | |
 | M6 | worktree·검증·인수인계 | 대기 | |
 
@@ -54,5 +55,10 @@
 - `agent.md`: 요약·문서 위치 / 소유권표 / 계약 안내 / 코딩 규칙 / 실행·환경변수 / 금지 8개 / 작업 전·후 체크리스트 / 인수인계 양식("요청" 칸 추가) / ADR 규칙·템플릿 / 커밋 규칙(AI 이름 금지) / CP 표·push 절차
 - work-plan §6 공통 절차에 CP 통과 후 push 추가
 
+## M4 완료 항목
+- `check.sh` 8개 항목: ① ruff ② pytest(계약 제외, 수집 0개=통과) ③ 계약 테스트 ④ 금지 파일(.env·data/·*.db·private/)·PII 정규식·`.forbidden_patterns.local` 고유명사 ⑤ 소유권(브랜치→역할, main...HEAD + 작업 트리 + 새 파일, 새 ADR 파일은 전원 허용) ⑥ 200줄 경고 ⑦ 커밋 메시지 형식·AI 표기 금지 ⑧ ADR(필수 제목·색인·계약 변경 커밋의 ADR 번호, 현재 비활성)
+- 임시 브랜치 feat/core로 소유권 위반 검출 확인 (contracts 수정 FAIL, agent/ 수정·새 ADR 허용) 후 브랜치 삭제
+- `.forbidden_patterns.local`은 사용자가 로컬에 직접 작성 필요 (Lead는 private 서류를 읽지 않음)
+
 ## 다음 시작점
-- M4: `check.sh` (ruff / pytest / 계약 / 금지 패턴 / 소유권 diff / 파일 길이 / 커밋 메시지 AI 표기 / ADR 검사는 M5 후 활성)
+- M5: ADR 0001~0011 + doc/adr/README.md 색인 → check.sh `ADR_CHECK_ENABLED=1`
