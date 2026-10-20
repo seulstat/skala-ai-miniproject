@@ -134,7 +134,7 @@ skala-ai-miniproject/
 
 ## 6. 분기점 (Checkpoint)
 
-**공통 절차**: 정해진 순서로 병합(core → mcp → api → web) → `check.sh` → design.md 적합성 체크리스트 → 해당 구간 ADR 확정 → **사용자 리뷰 게이트**(인수인계 노트를 읽고 핵심 흐름을 설명할 수 있는가) → 통과해야 다음 단계.
+**공통 절차**: 정해진 순서로 병합(core → mcp → api → web) → `check.sh` → design.md 적합성 체크리스트 → 해당 구간 ADR 확정 → **사용자 리뷰 게이트**(인수인계 노트를 읽고 핵심 흐름을 설명할 수 있는가) → 통과해야 다음 단계 → Lead가 `main`을 private 레포 `origin`(github.com/seulstat/skala-ai-miniproject)에 push.
 
 | CP | 시점 | 결합 대상 | 통과 기준 | 적합성 체크 (design.md) | 실패 시 |
 |---|---|---|---|---|---|
