@@ -1,0 +1,119 @@
+# 역할 agent 착수 프롬프트 (CP0 승인 후 사용)
+
+> 사용자가 각 worktree에서 새 세션(역할 agent, Sonnet 권장)을 열고 아래 블록을 그대로 붙여 넣는다.
+> A3(API)는 CP1 이후에 착수하므로 여기에는 A1·A2·A4만 둔다. A3 프롬프트는 CP1에서 Lead가 작성한다.
+
+---
+
+## A1 에이전트 코어 — `.worktrees/core` (브랜치 `feat/core`)
+
+```text
+너는 Interview Coach Agent 프로젝트의 A1(에이전트 코어) agent다. 작업 폴더는 .worktrees/core, 브랜치는 feat/core다.
+
+[먼저 읽을 것 — 이 순서로, 읽기 전에는 아무것도 만들지 않는다]
+1. agent.md (공용 규칙·소유권·금지 사항·체크리스트)
+2. doc/design.md §2·§3·§5·§6
+3. doc/work-plan.md §5 "A1 에이전트 코어"
+4. doc/adr/README.md → 0001·0002·0004·0005·0006·0011 (기각된 대안 확인)
+5. contracts/ 전체, ref/v1/graph.py·tools.py·config.py (10/13 원본, 읽기 전용)
+
+[담당 경로 — 이 밖은 수정 금지]
+agent/ (단 agent/mcp_client.py 제외), tests/test_core_*.py, doc/handoff/core.md, doc/adr/NNNN-*.md(새 Proposed만)
+
+[할 일]
+- agent/llm.py: FAST_MODEL·QUALITY_MODEL → init_chat_model, "fake"면 GenericFakeChatModel
+- agent/deps.py: build_deps() — contracts.deps.Deps 조립 (정의는 contracts에 있음)
+- agent/tools.py: 래퍼 @tool 3개(contracts.mcp.AGENT_TOOL_NAMES). deps.mcp만 호출, 호출마다 EvidenceSearched 전송. A2 구현 전에는 contracts/fixtures 기반 fake MCPPort로 개발
+- agent/coach_agent.py: create_agent(ReAct) + ToolStrategy(ExpressionCard) + ToolCallLimitMiddleware 서브그래프
+- agent/reviewer_agent.py: LLM 검수 + agent/prompts.py banned_hits 규칙 검사 서브그래프 (규칙 위반은 LLM이 통과라고 해도 위반)
+- agent/graph.py: Supervisor — router → coach → reviewer ⟲(contracts.state.MAX_REWRITES) → approve(interrupt) → save/rejected, review_cards, out_of_scope. 노드는 모두 async, 이벤트는 contracts.events 모델로 get_stream_writer()
+- agent/store.py: contracts.deps.CardStore 구현 (SQLite coach.db, 단계 0·1·2 = D+1·D+3·D+7)
+- agent/prompts.py·agent/retry.py는 복사본이다. prompts.py의 `.config` import(TODO)를 deps.paths 기반으로 바꾼다
+- tests/test_contracts.py 마지막 테스트(스텁 그래프 스모크: 이벤트 전송·interrupt·AsyncSqliteSaver·resume)가 참고 구현이다
+
+[완료 기준]
+- design §6 테스트 1~7을 tests/test_core_*.py로 작성해 통과 (fake 모델, 네트워크 없음, tmp_path)
+- bash check.sh FAIL 0
+- doc/handoff/core.md 작성 (agent.md §8 양식)
+
+[금지]
+- contracts/·agent/mcp_client.py·routers/·web/ 수정, 동기 invoke, 전역 싱글턴, requirements.txt 수정
+- 계약이 부족하면 고치지 말고 Proposed ADR을 쓰고 Lead(사용자)에게 보고
+- git push, main 커밋, 커밋 메시지에 Claude·AI 이름(Co-Authored-By 포함)
+- 커밋 형식: [core] 요약 (ADR-NNNN)
+
+[보고] 끝나면 check.sh 출력 원문, 테스트 결과, 인수인계 노트 경로, Lead 요청 사항을 보고하고 멈춘다.
+```
+
+---
+
+## A2 MCP·RAG — `.worktrees/mcp` (브랜치 `feat/mcp`)
+
+```text
+너는 Interview Coach Agent 프로젝트의 A2(MCP·RAG) agent다. 작업 폴더는 .worktrees/mcp, 브랜치는 feat/mcp다.
+
+[먼저 읽을 것 — 이 순서로, 읽기 전에는 아무것도 만들지 않는다]
+1. agent.md
+2. doc/design.md §2·§3
+3. doc/work-plan.md §5 "A2 MCP·RAG"
+4. doc/adr/README.md → 0002·0003·0005·0011
+5. contracts/mcp.py·deps.py(MCPPort, DataPaths)·schemas.py, ref/v1/tools.py·config.py, rag.py(복사본), agent/mcp_client.py(Base 복사본)
+
+[담당 경로 — 이 밖은 수정 금지]
+mcp_server.py, rag.py, agent/mcp_client.py, templates/, tests/test_mcp_*.py, doc/handoff/mcp.md, doc/adr/NNNN-*.md(새 Proposed만)
+
+[할 일]
+- mcp_server.py(fastmcp, stdio, 서버 이름 contracts.mcp.SERVER_NAME): Tool search_my_experience·search_expression_bank(SearchArgs), Resource posting://{section}, Prompt persona_review_prompt(인자 없음). 이름·인자는 contracts.mcp 상수만 사용
+- rag.py: `.config` 의존(TODO)을 DataPaths.from_env()·EMBEDDING_MODEL로 교체. 제목 단위 분할 → 임베딩 → 코사인 검색, 파일 mtime 변경 시 재색인, 결과에 contracts.mcp.LABEL_* 형식 출처 라벨. EMBEDDING_MODEL=fake면 네트워크 없는 fake 임베딩
+- agent/mcp_client.py: coach 서버용으로 조정, find_* 탐색 유지, 의도적 flaky 데모 제거, contracts.deps.MCPPort 충족(call_tool은 str 반환, server 인자 없이 동작)
+- 표현집이 없으면 templates/expression_bank.template.json, 규칙은 DataPaths.persona_rules 사용
+
+[완료 기준]
+- tests/test_mcp_*.py: 이름·시그니처가 contracts/mcp.py와 일치, 검색 결과에 출처 라벨, Resource 섹션 추출, Prompt 렌더링, mtime 재색인, MCPClient가 MCPPort를 만족 (fake 임베딩, 네트워크 없음, tmp_path에 examples/sample_user 복사해서 사용)
+- bash check.sh FAIL 0
+- doc/handoff/mcp.md 작성
+
+[금지]
+- agent/의 다른 파일·contracts/ 수정, 데이터 경로 하드코딩(DataPaths 사용), requirements.txt 수정
+- 실제 개인 서류 사용 (examples/sample_user만)
+- git push, main 커밋, 커밋 메시지에 Claude·AI 이름
+- 커밋 형식: [mcp] 요약 (ADR-NNNN)
+
+[보고] 끝나면 check.sh 출력 원문, 테스트 결과, 인수인계 노트 경로, Lead 요청 사항을 보고하고 멈춘다.
+```
+
+---
+
+## A4 프론트 — `.worktrees/web` (브랜치 `feat/web`)
+
+```text
+너는 Interview Coach Agent 프로젝트의 A4(프론트) agent다. 작업 폴더는 .worktrees/web, 브랜치는 feat/web다.
+
+[먼저 읽을 것 — 이 순서로, 읽기 전에는 아무것도 만들지 않는다]
+1. agent.md
+2. doc/design.md §2·§4·§5
+3. doc/work-plan.md §5 "A4 프론트"
+4. doc/adr/README.md → 0006·0007·0008
+5. contracts/api.py(ROUTES)·events.py·schemas.py, contracts/fixtures/ 전체, ref/base/web_chat.html·web_demo_server.py
+
+[담당 경로 — 이 밖은 수정 금지]
+web/, web_server.py, doc/handoff/web.md, doc/adr/NNNN-*.md(새 Proposed만)
+
+[할 일]
+- 탭 3개 P0 (design §4): ①준비(체크리스트·개인정보 경고, 프로필 폼, .md 업로드 FileReader→JSON, 공고 붙여넣기 → 정리 → 수정 → 저장) ②코치(채팅 입력·예시 칩, 진행 타임라인, 카드 컴포넌트 Formal/Casual·핵심 표현·근거 칩·답변 초안, 경고 배너, 승인·거절, 새로고침 시 /chat/pending으로 복원) ③카드(목록·다음 복습일, P1 퀴즈)
+- Vue 3 CDN 버전 고정, web/api.js(fetch + EventSource 래퍼, SSE는 `data: <json>` + `data: [DONE]`), thread_id는 localStorage
+- web_server.py(:8600): 정적 서빙 + /api/*·/chat/* 프록시(→ :8100). MOCK=1이면 contracts/fixtures로 응답하고 sse_*.json을 순서대로 재생 (contracts.fixtures.load 사용)
+- 파일이 200줄을 넘으면 web/components/로 분리
+
+[완료 기준]
+- MOCK=1 python web_server.py로 design §4 P0 화면 전부 동작 (sse_express_approve·sse_express_warning·sse_answer_approve·sse_review·sse_out_of_scope 재생, pending 복원, resume 응답)
+- bash check.sh FAIL 0
+- doc/handoff/web.md 작성 (실행 방법·화면 캡처 경로 포함)
+
+[금지]
+- 백엔드 코드(server.py·routers/·agent/)·contracts/ 수정, 계약에 없는 필드·경로 사용
+- git push, main 커밋, 커밋 메시지에 Claude·AI 이름
+- 커밋 형식: [web] 요약 (ADR-NNNN)
+
+[보고] 끝나면 check.sh 출력 원문, 확인한 화면 목록, 인수인계 노트 경로, Lead 요청 사항을 보고하고 멈춘다.
+```

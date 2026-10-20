@@ -123,3 +123,60 @@ async def test_deps_assembles_with_fakes(data_paths):
     assert isinstance(deps.mcp, MCPPort) and isinstance(deps.store, CardStore)
     assert (await deps.fast_llm.ainvoke("hi")).content == "ok"
     assert (await deps.mcp.call_tool(mcp.TOOL_SEARCH_MY_EXPERIENCE, {"query": "q"})).startswith("[")
+
+
+# ---------- 스모크: 계약만으로 조립한 스텁 그래프 (CP0, 실제 그래프는 A1) ----------
+
+async def test_stub_graph_streams_contract_events_and_resumes(data_paths):
+    from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
+    from langgraph.config import get_stream_writer
+    from langgraph.graph import END, START, StateGraph
+    from langgraph.types import Command, interrupt
+
+    llm = GenericFakeChatModel(messages=iter([AIMessage(content="express")]))
+    card = load("card_express.json")
+
+    async def router(s):
+        intent = (await llm.ainvoke(s["user_input"])).content
+        get_stream_writer()(events.RouteDecided(intent=intent).model_dump())
+        return {"intent": intent, "retry_count": 0}
+
+    async def coach(s):
+        w = get_stream_writer()
+        w(events.EvidenceSearched(tool=mcp.AGENT_TOOL_SEARCH_MY_EXPERIENCE, query="배송 지연").model_dump())
+        w(events.CardDrafted(attempt=1).model_dump())
+        return {"card": card}
+
+    async def reviewer(s):
+        get_stream_writer()(events.ReviewDone(round=1, passed=True).model_dump())
+        return {"review": load("review_passed.json")}
+
+    async def approve(s):
+        req = schemas.ApprovalRequest(card=s["card"])
+        get_stream_writer()(events.ApprovalRequired(card=req.card).model_dump())
+        return {"approved": interrupt(req.model_dump())["approve"]}
+
+    async def save(s):
+        return {"saved_card_id": "C0001", "next_review": "2026-10-21"}
+
+    g = StateGraph(state.AgentState)
+    for name, fn in [(state.NODE_ROUTER, router), (state.NODE_COACH, coach), (state.NODE_REVIEWER, reviewer),
+                     (state.NODE_APPROVE, approve), (state.NODE_SAVE, save)]:
+        g.add_node(name, fn)
+    g.add_edge(START, state.NODE_ROUTER)
+    g.add_edge(state.NODE_ROUTER, state.NODE_COACH)
+    g.add_edge(state.NODE_COACH, state.NODE_REVIEWER)
+    g.add_edge(state.NODE_REVIEWER, state.NODE_APPROVE)
+    g.add_edge(state.NODE_APPROVE, state.NODE_SAVE)
+    g.add_edge(state.NODE_SAVE, END)
+
+    cfg = {"configurable": {"thread_id": "t1"}}
+    async with AsyncSqliteSaver.from_conn_string(str(data_paths.checkpoints_db)) as saver:
+        graph = g.compile(checkpointer=saver)
+        got = [e async for e in graph.astream({"user_input": "민원을 줄였다"}, cfg, stream_mode="custom")]
+        types = [events.parse_event(e).type for e in got] + ["[DONE]"]
+        assert events.is_valid_sequence(types), types
+        pending = (await graph.aget_state(cfg)).interrupts[0].value     # /chat/pending이 돌려줄 값
+        assert schemas.ApprovalRequest.model_validate(pending).card.korean_prompt == card["korean_prompt"]
+        final = await graph.ainvoke(Command(resume=state.ResumeValue(approve=True)), cfg)
+        assert final["approved"] is True and final["saved_card_id"] == "C0001"
