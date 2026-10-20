@@ -1,0 +1,13 @@
+{
+  "goal": "취업 면접(영어 면접 포함)",
+  "target_role": "★ 지원 직무와 구분 (예: 데이터 분석가, 신입)",
+  "speaking_with": ["면접관", "★ 영어로 대화할 상대 (예: 해외 법인 동료)"],
+  "tone_preference": "부드럽고 정중한 느낌",
+  "english_variety": "미국식",
+  "certifications": [
+    {"name": "★ 시험명 (예: TOEIC Speaking, OPIc)", "score_or_level": "★ 점수·등급 (예: IM3, 130)"}
+  ],
+  "background": "★ 전공과 핵심 경험을 2~3문장으로",
+  "persona_summary": "★ (선택) 면접에서 어떤 사람으로 보이고 싶은지 한 줄. 필요 없으면 빈 문자열로",
+  "known_chunks": []
+}

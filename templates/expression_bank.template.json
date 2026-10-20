@@ -1,0 +1,8 @@
+{
+  "_note": "(선택) 내가 직접 확인했거나 믿을 수 있는 영어 면접 표현 모음. verified=true 인 것을 Agent가 우선 참고합니다. 없어도 동작합니다.",
+  "expressions": [
+    {"id": "E01", "category": "limitation", "situation": "검증한 범위와 아닌 범위 구분", "phrase": "This is what I've verified so far, and this part still needs to be checked.", "verified": false},
+    {"id": "E02", "category": "collaboration", "situation": "의견이 다를 때", "phrase": "I'd start by checking what they saw on their side, and then we'd decide together.", "verified": false},
+    {"id": "E03", "category": "motivation", "situation": "입사 후 하고 싶은 일", "phrase": "I'd like to go beyond building it and keep it running well as conditions change.", "verified": false}
+  ]
+}

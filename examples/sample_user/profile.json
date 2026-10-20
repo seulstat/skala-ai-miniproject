@@ -1,0 +1,13 @@
+{
+  "goal": "취업 면접(영어 면접 포함)",
+  "target_role": "이커머스 데이터 분석가 (신입)",
+  "speaking_with": ["면접관", "해외 물류 파트너 담당자"],
+  "tone_preference": "부드럽고 정중한 느낌",
+  "english_variety": "미국식",
+  "certifications": [
+    {"name": "OPIc", "score_or_level": "IM2"}
+  ],
+  "background": "경영학·통계학 복수전공. 학부 프로젝트로 온라인 쇼핑몰 고객 이탈 예측 모델을 만들었고, 물류 스타트업 인턴으로 배송 지연 원인을 분석했다.",
+  "persona_summary": "숫자로 문제를 좁히고, 현업이 바로 쓸 수 있는 형태로 전달하는 사람",
+  "known_chunks": []
+}

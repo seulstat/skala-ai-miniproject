@@ -1,0 +1,12 @@
+[
+  {"id": "T01", "intent": "express", "input": "제 연구는 AI가 틀릴 때를 미리 골라내는 거예요"},
+  {"id": "T02", "intent": "express", "input": "정확도는 97%였는데 틀린 답에도 확신을 가졌어요"},
+  {"id": "T03", "intent": "express", "input": "그 부분은 아직 현장에서 확인해봐야 할 것 같습니다"},
+  {"id": "T04", "intent": "express", "input": "입사하면 이 분야를 많이 배우고 싶습니다"},
+  {"id": "T05", "intent": "express", "input": "구청 실무자 지적을 듣고 목표를 다시 세웠어요"},
+  {"id": "T06", "intent": "answer", "input": "Could you briefly introduce yourself?"},
+  {"id": "T07", "intent": "answer", "input": "면접 질문: 현장에서 모델 성능이 떨어지면 어떻게 대응하겠습니까?"},
+  {"id": "T08", "intent": "review", "input": "오늘 복습할 카드 보여줘"},
+  {"id": "T09", "intent": "out_of_scope", "input": "오늘 점심 메뉴 추천해줘"},
+  {"id": "T10", "intent": "out_of_scope", "input": "파이썬으로 YOLO 학습 코드 짜줘"}
+]
