@@ -79,7 +79,7 @@ MCP 서버 "coach" (stdio)     SQLite: checkpoints.db (AsyncSqliteSaver)
 | Multi-Agent | Coach / Reviewer 서브그래프 + Supervisor 그래프 | `agent/coach_agent.py`, `agent/reviewer_agent.py`, `agent/graph.py` |
 | MCP | Tool 2 · Resource 1 · Prompt 1, `find_*`로 서버 탐색 후 호출 | `mcp_server.py`, `agent/mcp_client.py` |
 | RAG | 경험 문서 제목 단위 분할 → 임베딩 → 코사인 검색, mtime 재색인 | `mcp_server.py` + `rag.py` |
-| DI | `Deps(fast_llm, quality_llm, mcp, store, checkpointer)`를 `partial`로 주입 | 정의 `contracts/deps.py`, 조립 `agent/deps.py`(`build_deps()`) |
+| DI | `Deps(fast_llm, quality_llm, mcp, store, checkpointer, paths)`를 `partial`로 주입 (`paths`=COACH_DATA_DIR 파일 배치, ADR-0011) | 정의 `contracts/deps.py`, 조립 `agent/deps.py`(`build_deps()`) |
 | LangSmith | 노드·MCP·LLM 계층 trace, Before/After 실행에 태그 | `@traceable`, 환경변수 |
 | 모듈화 | `agent/`, `routers/`, `web/` 분리, 파일당 약 200줄 이하 | 디렉토리 구조 |
 | 단위테스트 | fake 모델 기반 pytest 9개 (§6) | `tests/` |

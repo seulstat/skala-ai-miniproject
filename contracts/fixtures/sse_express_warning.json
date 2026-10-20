@@ -1,0 +1,91 @@
+[
+  {
+    "type": "RouteDecided",
+    "intent": "express"
+  },
+  {
+    "type": "EvidenceSearched",
+    "tool": "search_my_experience",
+    "query": "배송 지연"
+  },
+  {
+    "type": "CardDrafted",
+    "attempt": 1
+  },
+  {
+    "type": "ReviewDone",
+    "round": 1,
+    "passed": false,
+    "violations": [
+      {
+        "rule_id": "FACT",
+        "quote": "reduced complaints by 50%",
+        "fix": "서류 수치 그대로: from 400 to 260"
+      },
+      {
+        "rule_id": "R3",
+        "quote": "single-handedly",
+        "fix": "팀·현장과의 협업이 드러나게 'I traced ... and shared it with the ops team'"
+      }
+    ]
+  },
+  {
+    "type": "CardDrafted",
+    "attempt": 2
+  },
+  {
+    "type": "ReviewDone",
+    "round": 2,
+    "passed": false,
+    "violations": [
+      {
+        "rule_id": "FACT",
+        "quote": "reduced complaints by 50%",
+        "fix": "서류 수치 그대로: from 400 to 260"
+      }
+    ]
+  },
+  {
+    "type": "CardDrafted",
+    "attempt": 3
+  },
+  {
+    "type": "ReviewDone",
+    "round": 3,
+    "passed": false,
+    "violations": [
+      {
+        "rule_id": "FACT",
+        "quote": "reduced complaints by 50%",
+        "fix": "서류 수치 그대로: from 400 to 260"
+      }
+    ]
+  },
+  {
+    "type": "ApprovalRequired",
+    "card": {
+      "korean_prompt": "배송 지연 원인을 데이터로 찾아서 민원을 줄였다고 말하고 싶어",
+      "mode": "express",
+      "formal_expression": "I single-handedly solved all delivery delays and reduced complaints by 50%.",
+      "casual_expression": "I basically fixed the whole delay problem by myself.",
+      "answer_draft": null,
+      "chunks": [
+        {
+          "phrase": "trace the root cause of",
+          "note": "~의 근본 원인을 추적하다"
+        },
+        {
+          "phrase": "cut A from X to Y",
+          "note": "A를 X에서 Y로 줄이다"
+        }
+      ],
+      "note": "인턴 경험의 수치(400→260건)를 그대로 써서 공고의 '데이터로 문제를 좁히는 역량'에 맞췄습니다.",
+      "evidence": [
+        "experience.md > 물류 스타트업 데이터 분석 인턴 (2개월)",
+        "job_posting > 주요 업무"
+      ]
+    },
+    "warning": "재작성 2회 후에도 검수 미통과: FACT 'reduced complaints by 50%'"
+  },
+  "[DONE]"
+]

@@ -1,0 +1,25 @@
+{
+  "ready": true,
+  "items": [
+    {
+      "item": "프로필",
+      "status": "ok",
+      "message": "profile.json 형식 정상"
+    },
+    {
+      "item": "경험 문서",
+      "status": "ok",
+      "message": "docs/ 1개 (experience.md)"
+    },
+    {
+      "item": "공고",
+      "status": "ok",
+      "message": "필수 섹션 2개 모두 있음"
+    },
+    {
+      "item": "개인정보",
+      "status": "warn",
+      "message": "전화번호·이메일 패턴은 없지만, 외부 LLM 사용 시 서류가 전송됩니다"
+    }
+  ]
+}

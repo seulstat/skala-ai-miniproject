@@ -1,0 +1,12 @@
+[
+  {
+    "type": "RouteDecided",
+    "intent": "out_of_scope"
+  },
+  {
+    "type": "FinalAnswer",
+    "reply": "저는 영어 면접 표현·답변 준비와 복습만 도와드려요. 면접에서 하고 싶은 말이나 면접 질문을 입력해 주세요.",
+    "error": false
+  },
+  "[DONE]"
+]

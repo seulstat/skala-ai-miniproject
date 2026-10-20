@@ -1,0 +1,31 @@
+{
+  "question": "이 카드를 복습 카드로 저장할까요?",
+  "card": {
+    "korean_prompt": "배송 지연 원인을 데이터로 찾아서 민원을 줄였다고 말하고 싶어",
+    "mode": "express",
+    "formal_expression": "I traced the root cause of delivery delays with data and helped cut monthly complaints from 400 to 260.",
+    "casual_expression": "I dug into the delay data and found where things were getting stuck, so complaints went down quite a bit.",
+    "answer_draft": null,
+    "chunks": [
+      {
+        "phrase": "trace the root cause of",
+        "note": "~의 근본 원인을 추적하다"
+      },
+      {
+        "phrase": "cut A from X to Y",
+        "note": "A를 X에서 Y로 줄이다"
+      }
+    ],
+    "note": "인턴 경험의 수치(400→260건)를 그대로 써서 공고의 '데이터로 문제를 좁히는 역량'에 맞췄습니다.",
+    "evidence": [
+      "experience.md > 물류 스타트업 데이터 분석 인턴 (2개월)",
+      "job_posting > 주요 업무"
+    ]
+  },
+  "warning": null,
+  "review": {
+    "passed": true,
+    "violations": [],
+    "feedback": "근거 수치가 정확하고 톤이 정중합니다."
+  }
+}

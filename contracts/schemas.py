@@ -1,7 +1,11 @@
-# 출처: skala-ai-agent/practice/dapdap/schemas.py (Phase 0 복사, 로직 미변경)
-"""구조화 출력 스키마. 친구 버전의 카드 스키마를 유지하고 Agent용 필드를 덧붙였다."""
+# 출처: skala-ai-agent/practice/dapdap/schemas.py (Phase 0 복사 후 계약 모델 추가, ADR-0011)
+"""구조화 출력 스키마. 친구 버전의 카드 스키마를 유지하고 Agent용 필드를 덧붙였다.
 
-from typing import List, Literal, Optional
+[계약] 10/13 모델(위쪽)은 LLM 구조화 출력용이라 필드 설명이 곧 프롬프트다. 아래 "웹 서비스 공용 모델"은 Phase 0에 추가했다.
+이 파일은 Lead만 수정한다.
+"""
+
+from typing import Dict, List, Literal, Optional
 
 from pydantic import BaseModel, Field
 
@@ -58,3 +62,40 @@ class ReviewResult(BaseModel):
     passed: bool = Field(description="위반이 하나도 없으면 true")
     violations: List[Violation] = Field(default_factory=list)
     feedback: str = Field(description="재작성 지시 (통과 시 한 줄 칭찬)")
+
+
+# ---------- 웹 서비스 공용 모델 (Phase 0 추가) ----------
+
+Intent = Literal["express", "answer", "review", "out_of_scope"]
+
+# 공고 섹션. "전체"는 조회용 가상 섹션 (10/13 tools.PostingSection과 동일)
+POSTING_SECTIONS: tuple[str, ...] = ("회사 소개", "주요 업무", "자격 요건", "우대 사항", "전형 절차", "영어 면접 안내")
+PostingSection = Literal["회사 소개", "주요 업무", "자격 요건", "우대 사항", "전형 절차", "영어 면접 안내", "전체"]
+REQUIRED_POSTING_SECTIONS: tuple[str, ...] = ("주요 업무", "자격 요건")
+
+# 복습 간격: 단계 0·1·2 = D+1·D+3·D+7 (design §4). "known"이면 단계+1(최대 2), "again"이면 단계 0
+REVIEW_INTERVALS_DAYS: tuple[int, ...] = (1, 3, 7)
+ReviewOutcome = Literal["known", "again"]
+
+
+class SavedCard(ExpressionCard):
+    """승인 후 coach.db에 저장된 카드. 날짜는 모두 YYYY-MM-DD 문자열."""
+    id: str = Field(description='저장 순번 기반 ID. 예: "C0001"')
+    created: str
+    next_review: str
+    stage: int = Field(default=0, ge=0, le=len(REVIEW_INTERVALS_DAYS) - 1)
+
+
+class ApprovalRequest(BaseModel):
+    """approve 노드의 interrupt() payload. SSE ApprovalRequired와 /chat/pending이 같은 내용을 쓴다."""
+    question: str = "이 카드를 복습 카드로 저장할까요?"
+    card: ExpressionCard
+    warning: Optional[str] = Field(default=None, description="재작성 상한 후에도 검수 미통과면 위반 요약, 아니면 null")
+    review: Optional[ReviewResult] = Field(default=None, description="마지막 검수 결과 (화면의 위반 표시용)")
+
+
+class PostingDraft(BaseModel):
+    """공고 정리 결과. markdown은 `## 섹션` 형식 전체 문서, sections는 섹션별 본문(없는 섹션은 키 없음)."""
+    markdown: str
+    sections: Dict[str, str] = Field(default_factory=dict)
+    missing_required: List[str] = Field(default_factory=list)

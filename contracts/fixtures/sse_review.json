@@ -1,0 +1,12 @@
+[
+  {
+    "type": "RouteDecided",
+    "intent": "review"
+  },
+  {
+    "type": "FinalAnswer",
+    "reply": "오늘 복습할 카드 2장 — 한국어를 보고 영어로 먼저 말해 보세요.\n\n[C0001] 배송 지연 원인을 데이터로 찾아서 민원을 줄였다고 말하고 싶어",
+    "error": false
+  },
+  "[DONE]"
+]

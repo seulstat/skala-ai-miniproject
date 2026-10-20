@@ -1,0 +1,54 @@
+[
+  {
+    "korean_prompt": "배송 지연 원인을 데이터로 찾아서 민원을 줄였다고 말하고 싶어",
+    "mode": "express",
+    "formal_expression": "I traced the root cause of delivery delays with data and helped cut monthly complaints from 400 to 260.",
+    "casual_expression": "I dug into the delay data and found where things were getting stuck, so complaints went down quite a bit.",
+    "answer_draft": null,
+    "chunks": [
+      {
+        "phrase": "trace the root cause of",
+        "note": "~의 근본 원인을 추적하다"
+      },
+      {
+        "phrase": "cut A from X to Y",
+        "note": "A를 X에서 Y로 줄이다"
+      }
+    ],
+    "note": "인턴 경험의 수치(400→260건)를 그대로 써서 공고의 '데이터로 문제를 좁히는 역량'에 맞췄습니다.",
+    "evidence": [
+      "experience.md > 물류 스타트업 데이터 분석 인턴 (2개월)",
+      "job_posting > 주요 업무"
+    ],
+    "id": "C0001",
+    "created": "2026-10-20",
+    "next_review": "2026-10-21",
+    "stage": 0
+  },
+  {
+    "korean_prompt": "Tell me about a time you changed your approach based on feedback.",
+    "mode": "answer",
+    "formal_expression": "In my capstone project, feedback from my advisor changed how I evaluated our churn model.",
+    "casual_expression": "My advisor's comment made me rethink how we measured our model.",
+    "answer_draft": "In my capstone project, we built a model to predict which new customers would churn. At first, I only looked at accuracy. My advisor pointed out that coupons cost money, so different mistakes have different costs. I switched to evaluating recall together with coupon cost. As a result, targeting the top 20% of at-risk customers captured 71% of churners, and our simulation showed a 2.3x higher coupon response rate. I learned that a model is only useful when its metric matches the business's cost structure.",
+    "chunks": [
+      {
+        "phrase": "pointed out that",
+        "note": "~라고 지적했다"
+      },
+      {
+        "phrase": "match the cost structure",
+        "note": "비용 구조에 맞추다"
+      }
+    ],
+    "note": "졸업 프로젝트의 평가 기준 변경 경험을 STAR 순서로 정리했습니다.",
+    "evidence": [
+      "experience.md > 고객 이탈 예측 졸업 프로젝트",
+      "job_posting > 영어 면접 안내"
+    ],
+    "id": "C0002",
+    "created": "2026-10-18",
+    "next_review": "2026-10-21",
+    "stage": 1
+  }
+]
