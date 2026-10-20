@@ -51,9 +51,11 @@ bad=$(echo "$FILES" | grep -E '(^|/)\.env$|(^|/)\.env\.[^e]|^data/|\.db$|\.db-|(
 TEXT_FILES=$(echo "$FILES" | grep -vE '^ref/|\.(png|jpg|pdf|ipynb)$' | while read -r f; do [ -f "$f" ] && echo "$f"; done)
 pii=$(echo "$TEXT_FILES" | xargs grep -nE '01[016789]-?[0-9]{3,4}-?[0-9]{4}|[0-9]{6}-[1-4][0-9]{6}' 2>/dev/null | grep -v '^check.sh:' || true)
 [ -z "$pii" ] && pass "전화번호·주민번호 패턴 없음" || { echo "$pii" | head -5; fail "개인정보 패턴 발견"; }
-# 실제 서류 고유명사: .forbidden_patterns.local (gitignore, 한 줄에 정규식 하나, 각자 로컬에만 둔다)
-if [ -f .forbidden_patterns.local ]; then
-  hits=$(echo "$TEXT_FILES" | xargs grep -nEf <(grep -vE '^\s*(#|$)' .forbidden_patterns.local) 2>/dev/null || true)
+# 실제 서류 고유명사: .forbidden_patterns.local (gitignore, 한 줄에 정규식 하나). worktree에서는 main 작업 트리의 파일을 쓴다
+FPL=.forbidden_patterns.local
+[ -f "$FPL" ] || FPL="$(cd "$(git rev-parse --git-common-dir)/.." && pwd)/.forbidden_patterns.local"
+if [ -f "$FPL" ]; then
+  hits=$(echo "$TEXT_FILES" | xargs grep -nEf <(grep -vE '^\s*(#|$)' "$FPL") 2>/dev/null || true)
   [ -z "$hits" ] && pass "고유명사 목록(.forbidden_patterns.local) 미검출" || { echo "$hits" | cut -c1-120 | head -5; fail "실제 서류 고유명사 발견"; }
 else
   warn ".forbidden_patterns.local 없음 — 실제 서류 고유명사 검사 생략"
