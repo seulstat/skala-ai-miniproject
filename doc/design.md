@@ -3,7 +3,7 @@
 > 작성 2026-10-20 (Day1) · 마감 Day3 13:00 (Git 주소 + 결과 보고서 링크 등록)
 > 출발점: 10/13 개인 과제 "영어 면접 Agent" (`skala-ai-agent/practice`, CLI) + Base 골격 `all_total_vue_student`
 > 이 문서는 구현 agent들이 공유하는 **단일 기준(source of truth)**이다. 범위·계약 변경은 이 문서를 먼저 고친다.
-> 변경 이력: 2026-10-20 Phase 0 — Deps 정의 위치를 `contracts/deps.py`로 이동(ADR-0011), 테스트 7 완료 시점을 CP1(Day2 오전)로 앞당김(ADR-0010)
+> 변경 이력: 2026-10-20 Phase 0 — Deps 정의 위치를 `contracts/deps.py`로 이동(ADR-0011), 테스트 7 완료 시점을 CP1(Day2 오전)로 앞당김(ADR-0010) / CP0 리뷰 — 강의자료 대조 후 오류 처리 4계층·ErrorRaised 이벤트·테스트 10·11 추가(ADR-0012)
 
 ## 0. 한 줄 정의
 
@@ -70,6 +70,7 @@ MCP 서버 "coach" (stdio)     SQLite: checkpoints.db (AsyncSqliteSaver)
 | HITL | `interrupt()` + `AsyncSqliteSaver`. `/chat/resume`은 JSON 응답, `/chat/pending`으로 새로고침 복원 | `EventSource`는 POST 불가. 승인 대기는 재시작 후에도 유지 |
 | 업로드 | 브라우저 `FileReader`로 텍스트를 읽어 JSON 전송 (multipart 없음) | 프록시 단순화 |
 | 사용자 | 단일 사용자 전제 | MVP 범위 |
+| 오류 처리 | 4계층(Tool·Orchestration·Application·Presentation) + 코드별 재시도 가능 여부·사용자 메시지(`contracts/errors.py`). timeout만 백오프 재시도, 검색 일부 실패는 격리하고 계속 진행 | 오류 종류마다 다른 안내·다시 시도 버튼, 부분 실패에도 결과 제공 (강의 p.18·p.174) |
 | DI 위치 | `Deps` 정의(필드·Protocol)는 `contracts/deps.py`, 조립 함수 `build_deps()`만 `agent/deps.py` | 서버(A3)·그래프(A1)·테스트가 같은 계약을 import하고, A1 소유 파일을 다른 역할이 고칠 일이 없음 |
 
 ## 3. 기술 요소 대응 (G2)
@@ -82,7 +83,7 @@ MCP 서버 "coach" (stdio)     SQLite: checkpoints.db (AsyncSqliteSaver)
 | DI | `Deps(fast_llm, quality_llm, mcp, store, checkpointer, paths)`를 `partial`로 주입 (`paths`=COACH_DATA_DIR 파일 배치, ADR-0011) | 정의 `contracts/deps.py`, 조립 `agent/deps.py`(`build_deps()`) |
 | LangSmith | 노드·MCP·LLM 계층 trace, Before/After 실행에 태그 | `@traceable`, 환경변수 |
 | 모듈화 | `agent/`, `routers/`, `web/` 분리, 파일당 약 200줄 이하 | 디렉토리 구조 |
-| 단위테스트 | fake 모델 기반 pytest 9개 (§6) | `tests/` |
+| 단위테스트 | fake 모델 기반 pytest 11개 (§6) | `tests/` |
 | HITL | `interrupt()` + SQLite 체크포인터, 웹 승인·거절, 재시작 후 복원 | `agent/graph.py` approve, `/chat/resume`, `/chat/pending` |
 
 ## 4. 화면 (탭 3개)
@@ -112,11 +113,13 @@ P0 = 필수, P1 = 시간이 남으면.
 
 ### SSE 이벤트 (순서)
 
-`RouteDecided{intent}` → `EvidenceSearched{tool, query}`(Tool 호출마다) → `CardDrafted{attempt}` → `ReviewDone{round, passed, violations[]}` → `ApprovalRequired{card, warning}` 또는 `FinalAnswer{reply}` → `[DONE]`
+`RouteDecided{intent}` → `EvidenceSearched{tool, query, error?}`(Tool 호출마다) → `CardDrafted{attempt}` → `ReviewDone{round, passed, violations[], error?}` → `ApprovalRequired{card, warning, notices[]}` 또는 `FinalAnswer{reply}` → `[DONE]`
+
+치명 오류는 어느 지점에서든 `ErrorRaised{error}` → `[DONE]`으로 끝난다(라우팅 전 `NOT_READY` 포함). `error`는 `{code, layer, recoverable, fatal, user_message, trace_id}`이고, 화면은 `user_message`를 보여 주며 `recoverable`이면 다시 시도 버튼을 둔다. 치명 아닌 오류(검색 일부 실패, 검수 저하)는 해당 이벤트의 `error`와 `notices`로만 알린다. REST 오류는 모두 `{error}` 본문 + 코드별 HTTP 상태(ADR-0012). SSE 응답은 `X-Accel-Buffering: no`·`Cache-Control: no-cache` 헤더를 붙이고, 프록시는 버퍼링 없이 전달한다.
 
 카드는 구조화 출력이므로 토큰 스트리밍하지 않는다(단계 이벤트로 진행 표시, 카드는 한 번에 렌더링 — 트레이드오프로 기록).
 
-## 6. 단위테스트 9개 (fake 모델, 네트워크 없음)
+## 6. 단위테스트 11개 (fake 모델, 네트워크 없음)
 
 1. router intent → 노드 매핑
 2. Reviewer의 금지 표현 regex가 LLM "통과" 판정이어도 위반을 잡음
@@ -126,7 +129,9 @@ P0 = 필수, P1 = 시간이 남으면.
 6. 그래프를 새로 빌드해도 체크포인트에서 승인 대기 복원 (재시작 시뮬레이션)
 7. 복습 단계 전환 (안다 / 다시)
 8. 준비 점검이 필수 항목 누락·개인정보 패턴 감지
-9. `/api/profile` 잘못된 enum → 422
+9. `/api/profile` 잘못된 enum → 422 (`ErrorResponse`, `INPUT_INVALID`)
+10. MCP 검색 timeout → 백오프 재시도 후 `ToolError` → 해당 검색만 실패 표시(`EvidenceSearched.error`)하고 카드는 생성, 영구 오류는 재시도 없이 즉시 실패 (A1)
+11. 치명 오류 → 코드별 `ErrorRaised`(`LLM_OUTPUT_INVALID` 재시도 가능, `NOT_READY` 불가) 후 `[DONE]`, `/chat/resume` 승인 대기 없음 → 409 `NO_PENDING` (A3)
 
 ## 7. Before/After · 한계 측정 (G3, G4)
 
@@ -144,7 +149,7 @@ P0 = 필수, P1 = 시간이 남으면.
 1. MCP stdio 경유 오버헤드 (호출당 ms)
 2. 체크포인트 DB가 대화 수에 따라 커지는 양
 3. ollama 소형 모델의 구조화 출력 실패율 (vs OpenAI)
-4. 단일 사용자 전제 + 외부 LLM으로 개인 서류 전송 (완화: ollama 선택지, 개인정보 검사)
+4. 단일 사용자 전제 + 외부 LLM으로 개인 서류 전송 (완화: ollama 선택지, 개인정보 검사). SQLite 체크포인터라 다중 인스턴스 간 상태 공유 불가 (강의 p.21은 PostgreSQL 채택 — ADR-0006)
 
 ## 8. 범위
 
@@ -158,9 +163,9 @@ P0 = 필수, P1 = 시간이 남으면.
 | 시점 | 작업 | 완료 기준 |
 |---|---|---|
 | Day1 ~17시 | 스프레드시트 계획 등록 | §11 압축본 |
-| Day1 저녁 | Deps, LLM 팩토리, 그래프(서브그래프 2개 + HITL), SQLite 체크포인터, 카드 store, fake로 테스트 1~7 | pytest 통과 (테스트 7은 CP1까지) |
+| Day1 저녁 | Deps, LLM 팩토리, 그래프(서브그래프 2개 + HITL), SQLite 체크포인터, 카드 store, fake로 테스트 1~7·10 | pytest 통과 (테스트 7·10은 CP1까지) |
 | Day2 오전 | MCP 서버(RAG 포함) + 래퍼 Tool, **CP1(테스트 1~7)**, API 라우터, ollama 스모크 | curl E2E |
-| Day2 오후 | 프론트 탭 ①②③ P0, 프록시, 테스트 8·9 | 브라우저 E2E |
+| Day2 오후 | 프론트 탭 ①②③ P0, 프록시, 테스트 8·9·11 | 브라우저 E2E |
 | Day3 오전 | OpenAI 최종 확인, Before/After 노트북, README 캡처, PPT, 남으면 P1 | 13시 전 링크 등록 |
 
 **컷 규칙**: Day2 오후까지 E2E가 안 되면 P1은 모두 버리고 측정·PPT를 우선한다.

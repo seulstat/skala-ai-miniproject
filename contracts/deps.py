@@ -64,7 +64,11 @@ class DataPaths:
 
 @runtime_checkable
 class MCPPort(Protocol):
-    """MCP 서버 "coach" 호출 인터페이스. 구현은 agent/mcp_client.py (A2), 이름은 contracts.mcp 상수."""
+    """MCP 서버 "coach" 호출 인터페이스. 구현은 agent/mcp_client.py (A2), 이름은 contracts.mcp_spec 상수.
+
+    오류 계약 (ADR-0012): 응답 지연은 asyncio.TimeoutError 그대로 올린다(호출부 with_retry가 재시도).
+    서버 연결 불가는 ToolError("MCP_UNAVAILABLE"), 서버 쪽 Tool 예외는 ToolError("TOOL_EXECUTION_ERROR").
+    """
 
     async def call_tool(self, name: str, arguments: dict) -> str:
         """Tool 결과 텍스트(출처 라벨 포함)를 돌려준다."""
@@ -80,7 +84,10 @@ class MCPPort(Protocol):
 
 @runtime_checkable
 class CardStore(Protocol):
-    """카드 저장소. 구현은 agent/store.py (A1). today를 비우면 오늘 날짜를 쓴다."""
+    """카드 저장소. 구현은 agent/store.py (A1). today를 비우면 오늘 날짜를 쓴다.
+
+    오류: DB 실패는 CoachError("STORE_ERROR"), 없는 card_id는 CoachError("NOT_FOUND") (contracts.errors).
+    """
 
     async def save_card(self, card: ExpressionCard, today: Optional[date] = None) -> SavedCard:
         ...

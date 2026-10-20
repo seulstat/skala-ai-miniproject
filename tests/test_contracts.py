@@ -9,7 +9,7 @@ from langchain_core.language_models.fake_chat_models import GenericFakeChatModel
 from langchain_core.messages import AIMessage
 from langgraph.checkpoint.memory import InMemorySaver
 
-from contracts import api, events, mcp, schemas, state
+from contracts import api, errors, events, mcp_spec, schemas, state
 from contracts.deps import CardStore, DataPaths, Deps, MCPPort
 from contracts.fixtures import FIXTURE_DIR, FIXTURE_SCHEMAS, SSE_FIXTURES, load, load_model
 
@@ -42,7 +42,10 @@ def test_sse_fixture_is_valid_sequence(name):
 @pytest.mark.parametrize("types, ok", [
     (["RouteDecided", "FinalAnswer", "[DONE]"], True),
     (["RouteDecided", "CardDrafted", "ReviewDone", "ApprovalRequired", "[DONE]"], True),
-    (["RouteDecided", "EvidenceSearched", "CardDrafted", "ReviewDone", "FinalAnswer", "[DONE]"], True),  # 오류 종료
+    (["RouteDecided", "EvidenceSearched", "CardDrafted", "ReviewDone", "ErrorRaised", "[DONE]"], True),  # 치명 오류
+    (["ErrorRaised", "[DONE]"], True),                                                              # 라우팅 전 오류
+    (["RouteDecided", "EvidenceSearched", "CardDrafted", "ReviewDone", "FinalAnswer", "[DONE]"], False),
+    (["RouteDecided", "ErrorRaised", "FinalAnswer", "[DONE]"], False),
     (["RouteDecided", "ApprovalRequired", "[DONE]"], False),
     (["CardDrafted", "ReviewDone", "ApprovalRequired", "[DONE]"], False),
     (["RouteDecided", "FinalAnswer"], False),
@@ -55,6 +58,15 @@ def test_invalid_enum_rejected():
     data = load("profile.json") | {"tone_preference": "아무거나"}
     with pytest.raises(ValueError):
         schemas.UserProfile.model_validate(data)
+
+
+def test_error_catalog_covers_all_codes():
+    assert set(errors.ERROR_CATALOG) == set(get_args(errors.ErrorCode))
+    info = errors.ToolError("TOOL_TIMEOUT_AFTER_RETRY", tool_name="search_my_experience", detail="3회 timeout").info
+    assert info.layer == "tool" and info.recoverable and not info.fatal
+    assert "timeout" not in info.user_message           # 내부 원인은 사용자 메시지에 섞지 않는다
+    for code, spec in errors.ERROR_CATALOG.items():
+        assert spec.fatal or spec.layer in ("tool", "orchestration"), code   # 치명 아닌 오류는 진행 중에만 생긴다
 
 
 def test_intent_mapping_covers_all_intents():
@@ -70,12 +82,12 @@ def test_saved_card_stage_bounds():
 
 
 def test_mcp_names_and_args():
-    assert set(mcp.TOOL_ARGS) == {"search_my_experience", "search_expression_bank"}
-    assert mcp.posting_uri("주요 업무") == "posting://주요 업무"
-    assert mcp.PROMPT_PERSONA_REVIEW == "persona_review_prompt"
-    assert set(mcp.AGENT_TOOL_NAMES) == {"search_my_experience", "search_expression_bank", "get_job_posting"}
+    assert set(mcp_spec.TOOL_ARGS) == {"search_my_experience", "search_expression_bank"}
+    assert mcp_spec.posting_uri("주요 업무") == "posting://주요 업무"
+    assert mcp_spec.PROMPT_PERSONA_REVIEW == "persona_review_prompt"
+    assert set(mcp_spec.AGENT_TOOL_NAMES) == {"search_my_experience", "search_expression_bank", "get_job_posting"}
     with pytest.raises(ValueError):
-        mcp.SearchArgs(query="x", k=9)
+        mcp_spec.SearchArgs(query="x", k=9)
 
 
 def test_routes_unique():
@@ -122,7 +134,7 @@ async def test_deps_assembles_with_fakes(data_paths):
                 checkpointer=InMemorySaver(), paths=data_paths)
     assert isinstance(deps.mcp, MCPPort) and isinstance(deps.store, CardStore)
     assert (await deps.fast_llm.ainvoke("hi")).content == "ok"
-    assert (await deps.mcp.call_tool(mcp.TOOL_SEARCH_MY_EXPERIENCE, {"query": "q"})).startswith("[")
+    assert (await deps.mcp.call_tool(mcp_spec.TOOL_SEARCH_MY_EXPERIENCE, {"query": "q"})).startswith("[")
 
 
 # ---------- 스모크: 계약만으로 조립한 스텁 그래프 (CP0, 실제 그래프는 A1) ----------
@@ -143,7 +155,7 @@ async def test_stub_graph_streams_contract_events_and_resumes(data_paths):
 
     async def coach(s):
         w = get_stream_writer()
-        w(events.EvidenceSearched(tool=mcp.AGENT_TOOL_SEARCH_MY_EXPERIENCE, query="배송 지연").model_dump())
+        w(events.EvidenceSearched(tool=mcp_spec.AGENT_TOOL_SEARCH_MY_EXPERIENCE, query="배송 지연").model_dump())
         w(events.CardDrafted(attempt=1).model_dump())
         return {"card": card}
 

@@ -3,6 +3,9 @@
 - 서버(A2, mcp_server.py)는 아래 이름·인자로 등록하고, 클라이언트(A2, agent/mcp_client.py)는 find_*로 찾는다.
 - Agent(A1, agent/tools.py)는 래퍼 @tool 3개만 LLM에 노출하고, 내부에서 deps.mcp를 호출한다 (ADR-0002).
 - Tool 결과는 문자열이며 근거마다 `[출처 라벨]`로 시작한다. 라벨이 ExpressionCard.evidence에 그대로 들어간다.
+- Resource `posting://`은 사용자가 공고를 고치면 바뀐다. 클라이언트·래퍼는 **캐시하지 않고 매번 읽는다** (강의 p.47).
+- Tool·Resource·Prompt의 docstring은 LLM이 Tool을 고르는 근거다. 언제 쓰는지와 인자 예시를 구체적으로 쓴다 (강의 p.45).
+- 오류는 contracts.deps.MCPPort docstring의 오류 계약을 따른다 (ADR-0012).
 """
 
 from pydantic import BaseModel, Field

@@ -1,0 +1,10 @@
+{
+  "error": {
+    "code": "NO_PENDING",
+    "layer": "application",
+    "recoverable": false,
+    "fatal": true,
+    "user_message": "승인 대기 중인 카드가 없어요. 이미 처리됐을 수 있어요.",
+    "trace_id": null
+  }
+}

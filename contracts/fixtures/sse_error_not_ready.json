@@ -1,0 +1,14 @@
+[
+  {
+    "type": "ErrorRaised",
+    "error": {
+      "code": "NOT_READY",
+      "layer": "application",
+      "recoverable": false,
+      "fatal": true,
+      "user_message": "준비 탭에서 프로필·경험 문서·공고를 먼저 입력해 주세요.",
+      "trace_id": null
+    }
+  },
+  "[DONE]"
+]

@@ -1,0 +1,24 @@
+[
+  {
+    "type": "RouteDecided",
+    "intent": "answer"
+  },
+  {
+    "type": "EvidenceSearched",
+    "tool": "search_my_experience",
+    "query": "피드백으로 접근 방식을 바꾼 경험",
+    "error": null
+  },
+  {
+    "type": "ErrorRaised",
+    "error": {
+      "code": "LLM_OUTPUT_INVALID",
+      "layer": "orchestration",
+      "recoverable": true,
+      "fatal": true,
+      "user_message": "카드 형식을 만들지 못했어요. 다시 시도하거나 더 큰 모델(QUALITY_MODEL)을 써 주세요.",
+      "trace_id": "run-demo-0001"
+    }
+  },
+  "[DONE]"
+]

@@ -9,6 +9,7 @@ from typing import List, Literal, Optional
 
 from pydantic import BaseModel, Field
 
+from contracts.errors import ErrorInfo
 from contracts.schemas import ApprovalRequest, ReviewOutcome
 
 # (메서드, 경로). A3 라우터와 A4 api.js·MOCK 서버가 같은 경로를 쓴다
@@ -32,6 +33,14 @@ ROUTES: dict[str, tuple[str, str]] = {
 
 class OkResponse(BaseModel):
     ok: bool = True
+
+
+class ErrorResponse(BaseModel):
+    """모든 REST 오류 응답 본문 (ADR-0012). HTTP 상태는 contracts.errors.ERROR_CATALOG[code].http_status.
+
+    요청 검증 실패(FastAPI RequestValidationError)도 422 + INPUT_INVALID로 이 형식에 맞춘다.
+    """
+    error: ErrorInfo
 
 
 # ---------- 경험 문서 ----------

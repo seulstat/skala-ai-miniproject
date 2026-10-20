@@ -10,12 +10,13 @@
 | [0003](0003-rag-inside-mcp-server.md) | RAG를 MCP 서버 프로세스 안에 둔다 | Accepted | 2026-10-20 | Lead | |
 | [0004](0004-coach-reviewer-multi-agent.md) | Coach·Reviewer 멀티에이전트로 전환 | Accepted | 2026-10-20 | Lead | supersedes 10/13 "단일 Agent + Reviewer 노드" |
 | [0005](0005-async-nodes.md) | 모든 그래프 노드를 async로 | Accepted | 2026-10-20 | Lead | |
-| [0006](0006-hitl-json-resume-pending.md) | HITL 재개는 JSON resume + pending 조회 | Accepted | 2026-10-20 | Lead | |
+| [0006](0006-hitl-json-resume-pending.md) | HITL 재개는 JSON resume + pending 조회 | Accepted (일부 0012로 대체) | 2026-10-20 | Lead | |
 | [0007](0007-upload-filereader-json.md) | 문서 업로드는 FileReader → JSON | Accepted | 2026-10-20 | Lead | |
 | [0008](0008-single-user-mvp-scope.md) | 단일 사용자 전제와 MVP 범위 컷 | Accepted | 2026-10-20 | Lead | |
 | [0009](0009-before-after-conditions.md) | Before/After 측정 조건 고정 | Accepted | 2026-10-20 | Lead | |
 | [0010](0010-roles-worktree-parallel.md) | 역할 분담과 worktree 병렬 진행 (테스트 7 → CP1) | Accepted | 2026-10-20 | Lead | |
 | [0011](0011-deps-in-contracts.md) | Deps 정의를 contracts/deps.py로, 조립은 build_deps() | Accepted | 2026-10-20 | Lead | design 초안 "agent/deps.py에 Deps 정의"를 대체 |
+| [0012](0012-error-handling-4layer.md) | 오류 처리를 4계층 분류 + 재시도 가능 여부 + ErrorRaised 이벤트로 | Accepted | 2026-10-20 | Lead | 0006의 오류 처리 부분을 대체 |
 
 ## design.md ↔ ADR 대응
 
@@ -32,3 +33,4 @@
 | §7 Before/After | 0009 |
 | §9 일정, work-plan §2·§6 | 0010 |
 | §2 DI 위치, §3 DI | 0011 |
+| §2 오류 처리, §5 ErrorRaised, §6 테스트 10·11 | 0012 |

@@ -85,6 +85,12 @@
 | M6 worktree·검증·인수인계 | +2%p | |
 | Phase 0 합계 | +13%p (16% → 29%) | M1 외삽 15%p와 거의 일치 |
 
+## CP0 리뷰 반영 (사용자 승인 3건)
+- 강의자료(AI캠퍼스_AI_Capstone_20261016.md) 대조 → 오류 처리 4계층(`contracts/errors.py`, `ErrorRaised`, `EvidenceSearched.error`, `notices`, `ErrorResponse`), ADR-0012(0006 일부 대체)
+- `contracts/mcp.py` → `contracts/mcp_spec.py` (강의 p.222 라이브러리 이름 가림 방지)
+- SSE_HEADERS(p.114), Resource 캐시 금지·docstring 품질(p.47·p.45), ADR-0002(MultiServerMCPClient 기각 근거)·0006(PostgreSQL 대안, HITL 위치)·0009(LangSmith 혼합 평가) 보강
+- design §2·§5·§6(테스트 11개)·§7·§9, work-plan §5·§6, agent.md, kickoff-prompts, lead.md 갱신. fixture 24개, 계약 테스트 43개
+
 ## 남은 항목
 - 없음. CP0 사용자 승인 대기
 

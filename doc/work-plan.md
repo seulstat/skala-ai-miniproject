@@ -95,16 +95,16 @@ skala-ai-miniproject/
   - `agent/graph.py`: Supervisor 그래프 — router → coach → reviewer ⟲2 → approve(`interrupt`) → save/rejected, review_cards, out_of_scope. 모든 노드 `async`, 이벤트는 `contracts/events.py` 모델로 `get_stream_writer()` 전송
   - `agent/store.py`: SQLite 카드 저장·due 조회·복습 단계(0·1·2 = D+1·D+3·D+7)
   - 체크포인터: `AsyncSqliteSaver`
-- **완료 기준**: design §6 테스트 1~7 통과 (fake 모델, 네트워크 없음)
+- **완료 기준**: design §6 테스트 1~7·10 통과 (fake 모델, 네트워크 없음)
 - **금지**: `agent/mcp_client.py`·라우터·웹 수정, 동기 `invoke` 사용
 
 ### A2 MCP·RAG (Day1 저녁 ~ Day2 오전)
-- **입력**: `contracts/mcp.py`, 10/13 `rag.py`·`tools.py`, Base `mcp_client.py`
+- **입력**: `contracts/mcp_spec.py`, 10/13 `rag.py`·`tools.py`, Base `mcp_client.py`
 - **할 일**
   - `mcp_server.py`(fastmcp): Tool `search_my_experience`·`search_expression_bank`, Resource `posting://{section}`, Prompt `persona_review_prompt`
   - `rag.py`: 제목 단위 분할 → 임베딩(`EMBEDDING_MODEL` env, 테스트용 fake 임베딩) → 코사인 검색, 파일 mtime이 바뀌면 재색인, 결과에 출처 라벨 포함
   - `agent/mcp_client.py`: Base 클라이언트를 coach 서버용으로 조정, `find_*` 탐색 유지, 의도적 flaky 데모 제거
-- **완료 기준**: `tests/test_mcp_*.py` — 이름·시그니처가 `contracts/mcp.py`와 일치, 검색 결과에 출처 라벨, Resource 섹션 추출, Prompt 렌더링, mtime 재색인
+- **완료 기준**: `tests/test_mcp_*.py` — 이름·시그니처가 `contracts/mcp_spec.py`와 일치, 검색 결과에 출처 라벨, Resource 섹션 추출, Prompt 렌더링, mtime 재색인
 - **금지**: `agent/` 다른 파일 수정, 데이터 경로 하드코딩(`COACH_DATA_DIR` 사용)
 
 ### A3 API (CP1 이후, Day2 오전 ~ 점심)
@@ -116,7 +116,7 @@ skala-ai-miniproject/
   - `routers/cards.py`: cards, due, review
   - `services/readiness.py`(check_inputs 이식), `services/posting.py`(ingest 프롬프트 이식)
   - `sh/smoke_chat.sh`: curl로 stream → pending → resume 시나리오
-- **완료 기준**: 테스트 8·9 통과, 스모크 스크립트가 fake와 ollama에서 성공
+- **완료 기준**: 테스트 8·9·11 통과, 스모크 스크립트가 fake와 ollama에서 성공
 - **금지**: 그래프 로직 수정(필요하면 A1에 요청), 계약 변경
 
 ### A4 프론트 (Day1 저녁 ~ Day2 저녁)
@@ -139,8 +139,8 @@ skala-ai-miniproject/
 | CP | 시점 | 결합 대상 | 통과 기준 | 적합성 체크 (design.md) | 실패 시 |
 |---|---|---|---|---|---|
 | **CP0** | Day1 19:30 | 계약 + 환경 | `check.sh` 통과, 빈 그래프가 fake 모델로 실행, worktree 4개 준비, ADR 0001~0011 등록 | §2 핵심 결정 ↔ ADR 대응 | 역할 착수 보류, Lead 보완 |
-| **CP1** | Day2 10:00 | A1 + A2 | 실제 MCP 서버 + fake LLM으로 그래프 E2E, 테스트 1~7 + MCP 테스트 통과 | §3 Multi-Agent·MCP·RAG·DI·HITL 행 | 경계 문제면 계약 보완 ADR, 아니면 해당 agent 재작업 |
-| **CP2** | Day2 13:00 | + A3 | `sh/smoke_chat.sh`가 fake → ollama 순서로 성공, 테스트 8·9 통과, 서버 재시작 후 pending 복원 확인 | §5 API·SSE 이벤트 표 | ollama 실패 시 QUALITY_MODEL 조정, 스모크는 fake로 진행 |
+| **CP1** | Day2 10:00 | A1 + A2 | 실제 MCP 서버 + fake LLM으로 그래프 E2E, 테스트 1~7·10 + MCP 테스트 통과 | §3 Multi-Agent·MCP·RAG·DI·HITL 행 | 경계 문제면 계약 보완 ADR, 아니면 해당 agent 재작업 |
+| **CP2** | Day2 13:00 | + A3 | `sh/smoke_chat.sh`가 fake → ollama 순서로 성공, 테스트 8·9·11 통과, 서버 재시작 후 pending 복원 확인 | §5 API·SSE 이벤트 표(오류 이벤트 포함) | ollama 실패 시 QUALITY_MODEL 조정, 스모크는 fake로 진행 |
 | **CP3** | Day2 20:00 | + A4 | 브라우저 E2E(ollama): 준비 → 생성 → 검수 → 승인 → 저장 → 카드 확인, 새로고침 후 승인 대기 복원 | §4 P0 체크리스트 전부 | **컷 규칙** 발동: P1 전부 제외, 결함 수정 우선 |
 | **CP4** | Day3 11:30 | 최종 | OpenAI로 E2E 확인, `before_after.ipynb`·`demo.ipynb` 출력 포함, README 캡처, ADR 결과 절 갱신 | §1 목표 G1~G7 전부 | 미측정 지표는 "미측정"으로 명시하고 PPT 우선 |
 

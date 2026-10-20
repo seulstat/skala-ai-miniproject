@@ -21,7 +21,7 @@
 
 | 문서 | 내용 |
 |---|---|
-| [doc/design.md](doc/design.md) | **단일 기준**: 목표 G1~G7, 구조, 기술요소 대응, 화면, API·SSE, 테스트 9개, 범위, 일정 |
+| [doc/design.md](doc/design.md) | **단일 기준**: 목표 G1~G7, 구조, 기술요소 대응, 화면, API·SSE, 테스트 11개, 범위, 일정 |
 | [doc/work-plan.md](doc/work-plan.md) | 역할·소유권, 역할별 작업 지시서(§5), 분기점 CP0~CP4(§6), ADR 운영(§8) |
 | [doc/adr/README.md](doc/adr/README.md) | ADR 색인 — **기각된 대안** 확인용 |
 | `contracts/` | 역할 사이 계약 코드 (State·Deps·스키마·SSE 이벤트·API·MCP 이름·fixture) |
@@ -49,9 +49,10 @@
 | `schemas.py` | UserProfile·ExpressionCard·Route·ReviewResult·Violation(10/13 그대로, 필드 설명이 곧 LLM 프롬프트) + Intent·PostingSection·SavedCard·ApprovalRequest·PostingDraft·REVIEW_INTERVALS_DAYS | 전원 |
 | `state.py` | AgentState(JSON 직렬화 가능한 값만), ResumeValue, MAX_REWRITES=2, 노드 이름, INTENT_TO_NODE | A1 |
 | `deps.py` | `Deps(fast_llm, quality_llm, mcp, store, checkpointer, paths)`, MCPPort·CardStore Protocol(async), DataPaths | A1·A2·A3 |
-| `events.py` | SSE 이벤트 6종, `to_sse`, `SSE_DONE`, `parse_event`, `is_valid_sequence` | A1·A3·A4 |
+| `events.py` | SSE 이벤트 7종(`ErrorRaised` 포함), `to_sse`, `SSE_DONE`, `SSE_HEADERS`, `parse_event`, `is_valid_sequence` | A1·A3·A4 |
+| `errors.py` | 오류 코드·계층·재시도 가능 여부·사용자 메시지(`ERROR_CATALOG`), `ErrorInfo`, `CoachError`·`ToolError`, 재시도 정책 `RETRY_*`, 로그 필드 `LOG_FIELDS` | 전원 |
 | `api.py` | ROUTES 표, REST 요청·응답 모델 | A3·A4 |
-| `mcp.py` | MCP Tool·Resource·Prompt 이름·인자, 출처 라벨 형식, Agent 래퍼 Tool 이름 | A1·A2 |
+| `mcp_spec.py` | MCP Tool·Resource·Prompt 이름·인자, 출처 라벨 형식, Agent 래퍼 Tool 이름 | A1·A2 |
 | `fixtures/` | fake 카드·검수 결과·SSE 시퀀스·API 응답 JSON, `load()`·`load_model()` | A1(fake MCP)·A4(MOCK) |
 
 - 계약이 부족하거나 틀렸으면 **고치지 말고** Lead에 요청하고 Proposed ADR을 쓴다. Lead가 계약·ADR을 고친 뒤 영향받는 역할에 알린다.
@@ -63,6 +64,7 @@
 - **DI**: 의존성은 `contracts.deps.Deps`로 받는다. 노드는 `functools.partial(node, deps=deps)`로 주입한다. 모듈 전역 싱글턴이나 import 시점의 모델·DB 생성은 금지한다. 조립은 `agent/deps.py`의 `build_deps()` 한 곳에서만 한다 (ADR-0011).
 - **LLM**: LangChain `BaseChatModel`만 쓴다. `init_chat_model`로 만들고, 테스트에서는 `GenericFakeChatModel`을 쓴다. Base의 httpx LLM 클래스는 쓰지 않는다 (ADR-0001).
 - **경로**: 데이터 경로는 `deps.paths`(DataPaths, `COACH_DATA_DIR`)만 쓴다. 하드코딩하지 않는다.
+- **오류 처리** (ADR-0012): 오류는 `contracts.errors`의 코드로만 분류한다. `except Exception: pass`나 오류를 삼키는 기본 문구 금지. Tool 호출은 `asyncio.TimeoutError`만 `RETRY_*` 정책으로 재시도하고, 나머지는 `ToolError`/`CoachError`로 바꾼다. 치명 아닌 오류는 이벤트의 `error`·`notices`로 알리고 계속 진행한다. 화면에는 `user_message`만, 내부 원인은 로그(`LOG_FIELDS`)에만 남긴다.
 - **파일 크기**: 파일당 약 200줄 이하. 넘으면 `check.sh`가 경고하니 모듈을 나눈다.
 - **스타일**: 주변 코드의 주석 밀도·명명·관용구를 따른다. 주석·docstring·문서는 한국어로 쓴다. `ruff check` 통과(`pyproject.toml` 설정).
 - **테스트**: fake 모델·fake MCP·`tmp_path`만 쓰고 네트워크를 쓰지 않는다. 파일 이름은 자기 역할 접두사(`test_core_*`, `test_mcp_*`, `test_api_*`)를 쓴다.
@@ -182,8 +184,8 @@ bash sh/seed_sample.sh           # examples/sample_user → COACH_DATA_DIR (시�
 | CP | 시점 | 통과 기준 (요약) |
 |---|---|---|
 | CP0 | Day1 19:30 | 계약·환경·ADR 0001~0011, worktree 4개 |
-| CP1 | Day2 10:00 | A1+A2: 실제 MCP + fake LLM 그래프 E2E, 테스트 1~7 + MCP 테스트 |
-| CP2 | Day2 13:00 | +A3: `sh/smoke_chat.sh` fake→ollama, 테스트 8·9, 재시작 후 pending 복원 |
+| CP1 | Day2 10:00 | A1+A2: 실제 MCP + fake LLM 그래프 E2E, 테스트 1~7·10 + MCP 테스트 |
+| CP2 | Day2 13:00 | +A3: `sh/smoke_chat.sh` fake→ollama, 테스트 8·9·11, 재시작 후 pending 복원 |
 | CP3 | Day2 20:00 | +A4: 브라우저 E2E(ollama), 새로고침 후 승인 대기 복원 |
 | CP4 | Day3 11:30 | OpenAI E2E, Before/After·demo 노트북, README 캡처 |
 

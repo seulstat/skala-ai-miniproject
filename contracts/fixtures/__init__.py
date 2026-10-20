@@ -28,10 +28,12 @@ FIXTURE_SCHEMAS: dict[str, tuple[type, bool]] = {
     "pending_none.json": (api.PendingResponse, False),
     "resume_saved.json": (api.ResumeResponse, False),
     "resume_rejected.json": (api.ResumeResponse, False),
+    "error_response.json": (api.ErrorResponse, False),
 }
 SSE_FIXTURES: tuple[str, ...] = (
     "sse_express_approve.json", "sse_express_warning.json", "sse_answer_approve.json",
     "sse_review.json", "sse_out_of_scope.json",
+    "sse_evidence_degraded.json", "sse_error_recoverable.json", "sse_error_not_ready.json",
 )
 
 

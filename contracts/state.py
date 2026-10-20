@@ -25,6 +25,7 @@ class AgentState(TypedDict, total=False):
     saved_card_id: str         # save 노드 결과
     next_review: str           # save 노드 결과 (YYYY-MM-DD)
     final_message: str         # FinalAnswer.reply 또는 save/rejected 안내 문구
+    notices: list              # ErrorInfo.model_dump() — 치명 아닌 오류 (Tool 실패, 검수 저하). ADR-0012
 
 
 class ResumeValue(TypedDict):

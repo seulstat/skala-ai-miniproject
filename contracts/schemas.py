@@ -9,6 +9,8 @@ from typing import Dict, List, Literal, Optional
 
 from pydantic import BaseModel, Field
 
+from contracts.errors import ErrorInfo
+
 
 class Certification(BaseModel):
     name: str = Field(description="예: TOEIC Speaking, OPIc")
@@ -92,6 +94,7 @@ class ApprovalRequest(BaseModel):
     card: ExpressionCard
     warning: Optional[str] = Field(default=None, description="재작성 상한 후에도 검수 미통과면 위반 요약, 아니면 null")
     review: Optional[ReviewResult] = Field(default=None, description="마지막 검수 결과 (화면의 위반 표시용)")
+    notices: List[ErrorInfo] = Field(default_factory=list, description="치명 아닌 오류 알림 (ADR-0012)")
 
 
 class PostingDraft(BaseModel):

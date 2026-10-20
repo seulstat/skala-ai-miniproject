@@ -14,16 +14,17 @@
 1. agent.md (공용 규칙·소유권·금지 사항·체크리스트)
 2. doc/design.md §2·§3·§5·§6
 3. doc/work-plan.md §5 "A1 에이전트 코어"
-4. doc/adr/README.md → 0001·0002·0004·0005·0006·0011 (기각된 대안 확인)
+4. doc/adr/README.md → 0001·0002·0004·0005·0006·0011·0012 (기각된 대안 확인)
 5. contracts/ 전체, ref/v1/graph.py·tools.py·config.py (10/13 원본, 읽기 전용)
 
 [담당 경로 — 이 밖은 수정 금지]
 agent/ (단 agent/mcp_client.py 제외), tests/test_core_*.py, doc/handoff/core.md, doc/adr/NNNN-*.md(새 Proposed만)
 
 [할 일]
-- agent/llm.py: FAST_MODEL·QUALITY_MODEL → init_chat_model, "fake"면 GenericFakeChatModel
+- agent/llm.py: FAST_MODEL·QUALITY_MODEL → init_chat_model, "fake"면 GenericFakeChatModel. LLM 예외(timeout·rate limit·인증·모델 없음·구조화 출력 실패)를 contracts.errors 코드의 CoachError로 바꾸는 분류 함수
 - agent/deps.py: build_deps() — contracts.deps.Deps 조립 (정의는 contracts에 있음)
-- agent/tools.py: 래퍼 @tool 3개(contracts.mcp.AGENT_TOOL_NAMES). deps.mcp만 호출, 호출마다 EvidenceSearched 전송. A2 구현 전에는 contracts/fixtures 기반 fake MCPPort로 개발
+- agent/tools.py: 래퍼 @tool 3개(contracts.mcp_spec.AGENT_TOOL_NAMES). deps.mcp만 호출, 호출마다 EvidenceSearched 전송. A2 구현 전에는 contracts/fixtures 기반 fake MCPPort로 개발
+- 오류 처리(ADR-0012, contracts/errors.py): 래퍼는 agent/retry.py with_retry로 asyncio.TimeoutError만 RETRY_* 정책(0.5→1.5초, 최대 2회)으로 재시도하고, 소진·영구 오류는 ToolError로 바꾼다. ToolError는 그 검색만 실패로 격리(EvidenceSearched.error + state.notices)하고 LLM에는 "근거 없음" 문자열을 돌려줘 진행을 계속한다. MCP_UNAVAILABLE·LLM 오류는 CoachError로 올려 그래프를 끝낸다. Reviewer LLM 실패는 규칙 검사만으로 진행(REVIEWER_DEGRADED, ReviewDone.error). ApprovalRequired·ApprovalRequest에 notices를 담는다
 - agent/coach_agent.py: create_agent(ReAct) + ToolStrategy(ExpressionCard) + ToolCallLimitMiddleware 서브그래프
 - agent/reviewer_agent.py: LLM 검수 + agent/prompts.py banned_hits 규칙 검사 서브그래프 (규칙 위반은 LLM이 통과라고 해도 위반)
 - agent/graph.py: Supervisor — router → coach → reviewer ⟲(contracts.state.MAX_REWRITES) → approve(interrupt) → save/rejected, review_cards, out_of_scope. 노드는 모두 async, 이벤트는 contracts.events 모델로 get_stream_writer()
@@ -32,7 +33,7 @@ agent/ (단 agent/mcp_client.py 제외), tests/test_core_*.py, doc/handoff/core.
 - tests/test_contracts.py 마지막 테스트(스텁 그래프 스모크: 이벤트 전송·interrupt·AsyncSqliteSaver·resume)가 참고 구현이다
 
 [완료 기준]
-- design §6 테스트 1~7을 tests/test_core_*.py로 작성해 통과 (fake 모델, 네트워크 없음, tmp_path)
+- design §6 테스트 1~7·10을 tests/test_core_*.py로 작성해 통과 (fake 모델, 네트워크 없음, tmp_path). 이벤트 시퀀스는 contracts.events.is_valid_sequence로 검사
 - bash check.sh FAIL 0
 - doc/handoff/core.md 작성 (agent.md §8 양식)
 
@@ -56,20 +57,21 @@ agent/ (단 agent/mcp_client.py 제외), tests/test_core_*.py, doc/handoff/core.
 1. agent.md
 2. doc/design.md §2·§3
 3. doc/work-plan.md §5 "A2 MCP·RAG"
-4. doc/adr/README.md → 0002·0003·0005·0011
-5. contracts/mcp.py·deps.py(MCPPort, DataPaths)·schemas.py, ref/v1/tools.py·config.py, rag.py(복사본), agent/mcp_client.py(Base 복사본)
+4. doc/adr/README.md → 0002·0003·0005·0011·0012
+5. contracts/mcp_spec.py·deps.py(MCPPort, DataPaths)·schemas.py, ref/v1/tools.py·config.py, rag.py(복사본), agent/mcp_client.py(Base 복사본)
 
 [담당 경로 — 이 밖은 수정 금지]
 mcp_server.py, rag.py, agent/mcp_client.py, templates/, tests/test_mcp_*.py, doc/handoff/mcp.md, doc/adr/NNNN-*.md(새 Proposed만)
 
 [할 일]
-- mcp_server.py(fastmcp, stdio, 서버 이름 contracts.mcp.SERVER_NAME): Tool search_my_experience·search_expression_bank(SearchArgs), Resource posting://{section}, Prompt persona_review_prompt(인자 없음). 이름·인자는 contracts.mcp 상수만 사용
-- rag.py: `.config` 의존(TODO)을 DataPaths.from_env()·EMBEDDING_MODEL로 교체. 제목 단위 분할 → 임베딩 → 코사인 검색, 파일 mtime 변경 시 재색인, 결과에 contracts.mcp.LABEL_* 형식 출처 라벨. EMBEDDING_MODEL=fake면 네트워크 없는 fake 임베딩
+- mcp_server.py(fastmcp, stdio, 서버 이름 contracts.mcp_spec.SERVER_NAME): Tool search_my_experience·search_expression_bank(SearchArgs), Resource posting://{section}, Prompt persona_review_prompt(인자 없음). 이름·인자는 contracts.mcp_spec 상수만 사용
+- rag.py: `.config` 의존(TODO)을 DataPaths.from_env()·EMBEDDING_MODEL로 교체. 제목 단위 분할 → 임베딩 → 코사인 검색, 파일 mtime 변경 시 재색인, 결과에 contracts.mcp_spec.LABEL_* 형식 출처 라벨. EMBEDDING_MODEL=fake면 네트워크 없는 fake 임베딩
 - agent/mcp_client.py: coach 서버용으로 조정, find_* 탐색 유지, 의도적 flaky 데모 제거, contracts.deps.MCPPort 충족(call_tool은 str 반환, server 인자 없이 동작)
 - 표현집이 없으면 templates/expression_bank.template.json, 규칙은 DataPaths.persona_rules 사용
+- 오류 계약(contracts.deps.MCPPort docstring, ADR-0012): 응답 지연은 asyncio.TimeoutError 그대로(호출부가 재시도), 서버 연결 불가는 ToolError("MCP_UNAVAILABLE"), 서버 쪽 Tool 예외는 ToolError("TOOL_EXECUTION_ERROR"). posting:// Resource는 캐시하지 않고 매번 읽는다. Tool·Resource·Prompt docstring에 언제 쓰는지·인자 예시를 구체적으로 쓴다
 
 [완료 기준]
-- tests/test_mcp_*.py: 이름·시그니처가 contracts/mcp.py와 일치, 검색 결과에 출처 라벨, Resource 섹션 추출, Prompt 렌더링, mtime 재색인, MCPClient가 MCPPort를 만족 (fake 임베딩, 네트워크 없음, tmp_path에 examples/sample_user 복사해서 사용)
+- tests/test_mcp_*.py: 이름·시그니처가 contracts/mcp_spec.py와 일치, 검색 결과에 출처 라벨, Resource 섹션 추출, Prompt 렌더링, mtime 재색인, MCPClient가 MCPPort를 만족, 서버가 없을 때 MCP_UNAVAILABLE (fake 임베딩, 네트워크 없음, tmp_path에 examples/sample_user 복사해서 사용)
 - bash check.sh FAIL 0
 - doc/handoff/mcp.md 작성
 
@@ -93,8 +95,8 @@ mcp_server.py, rag.py, agent/mcp_client.py, templates/, tests/test_mcp_*.py, doc
 1. agent.md
 2. doc/design.md §2·§4·§5
 3. doc/work-plan.md §5 "A4 프론트"
-4. doc/adr/README.md → 0006·0007·0008
-5. contracts/api.py(ROUTES)·events.py·schemas.py, contracts/fixtures/ 전체, ref/base/web_chat.html·web_demo_server.py
+4. doc/adr/README.md → 0006·0007·0008·0012
+5. contracts/api.py(ROUTES, ErrorResponse)·events.py·errors.py(ERROR_CATALOG)·schemas.py, contracts/fixtures/ 전체, ref/base/web_chat.html·web_demo_server.py
 
 [담당 경로 — 이 밖은 수정 금지]
 web/, web_server.py, doc/handoff/web.md, doc/adr/NNNN-*.md(새 Proposed만)
@@ -103,10 +105,12 @@ web/, web_server.py, doc/handoff/web.md, doc/adr/NNNN-*.md(새 Proposed만)
 - 탭 3개 P0 (design §4): ①준비(체크리스트·개인정보 경고, 프로필 폼, .md 업로드 FileReader→JSON, 공고 붙여넣기 → 정리 → 수정 → 저장) ②코치(채팅 입력·예시 칩, 진행 타임라인, 카드 컴포넌트 Formal/Casual·핵심 표현·근거 칩·답변 초안, 경고 배너, 승인·거절, 새로고침 시 /chat/pending으로 복원) ③카드(목록·다음 복습일, P1 퀴즈)
 - Vue 3 CDN 버전 고정, web/api.js(fetch + EventSource 래퍼, SSE는 `data: <json>` + `data: [DONE]`), thread_id는 localStorage
 - web_server.py(:8600): 정적 서빙 + /api/*·/chat/* 프록시(→ :8100). MOCK=1이면 contracts/fixtures로 응답하고 sse_*.json을 순서대로 재생 (contracts.fixtures.load 사용)
+- 오류 화면(ADR-0012): ErrorRaised·REST ErrorResponse는 error.user_message를 표시하고, recoverable이면 "다시 시도" 버튼, NOT_READY면 준비 탭으로 이동 버튼. EvidenceSearched.error는 타임라인에 실패 표시, ApprovalRequired.notices는 카드 위 경고 배너. SSE 연결이 끊기면(STREAM_DISCONNECTED) /chat/pending으로 승인 대기 확인
+- web_server.py 프록시는 SSE를 버퍼링하지 않고 그대로 흘려보낸다(httpx 스트리밍, contracts.events.SSE_HEADERS 전달). curl -N으로 이벤트가 하나씩 도착하는지 확인 (강의 p.114)
 - 파일이 200줄을 넘으면 web/components/로 분리
 
 [완료 기준]
-- MOCK=1 python web_server.py로 design §4 P0 화면 전부 동작 (sse_express_approve·sse_express_warning·sse_answer_approve·sse_review·sse_out_of_scope 재생, pending 복원, resume 응답)
+- MOCK=1 python web_server.py로 design §4 P0 화면 전부 동작 (sse_*.json 8종 재생 — 정상 5종 + sse_evidence_degraded·sse_error_recoverable·sse_error_not_ready, pending 복원, resume 응답, error_response 표시)
 - bash check.sh FAIL 0
 - doc/handoff/web.md 작성 (실행 방법·화면 캡처 경로 포함)
 

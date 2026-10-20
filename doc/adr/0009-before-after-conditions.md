@@ -23,5 +23,5 @@ v1 = 10/13 CLI(`eval/v1/run_eval.py`를 원본 폴더에서 실행), v2 = 신규
 ## 결과
 - 긍정: 기능 후퇴 여부와 구조 개선 효과를 같은 조건에서 보여 줄 수 있다.
 - 부정(트레이드오프): 10건이라 통계적 유의성이 약하다. 1건 지연은 MCP·검수 분리로 늘 수 있다(한계로 보고).
-- 후속 조치: Day3 오전 Lead가 `eval/run_eval.py`(v2)·`before_after.ipynb`를 작성하고 결과 절을 갱신한다.
+- 후속 조치: Day3 오전 Lead가 `eval/run_eval.py`(v2)·`before_after.ipynb`를 작성하고 결과 절을 갱신한다. 강의자료 p.20(LangSmith + 혼합 Evaluator)에 맞춰 규칙 기반 지표(라우팅 정확도·구조화 출력 성공률·금지 표현)와 LLM-judge 점수를 함께 쓰고, 실행에 LangSmith 태그(`v1`/`v2`)를 붙여 trace와 연결한다. LangSmith Dataset 업로드는 P1.
 - 검증 방법: 노트북 출력 포함 저장, design §7 표에 가설 vs 실측 기록.
