@@ -9,6 +9,8 @@
 | ~17:25 | M2 완료 | 23% | M2 +4%p (비중 25% 대비 예상 3.75%p, 정상) |
 | ~17:35 | M3 완료 | 24% | M3 +1%p |
 | ~17:50 | M4 완료 | 25% | M4 +1%p (누적 +9%p) |
+| ~18:05 | M5 완료 | 27% | M5 +2%p (누적 +11%p) |
+| — | M6 완료 (CP0 보고) | 사용자 확인 대기 | |
 
 ## 마일스톤 상태
 
@@ -19,7 +21,7 @@
 | M3 | agent.md | 완료 | `[lead] Phase 0 M3 ...` |
 | M4 | check.sh | 완료 | `[lead] Phase 0 M4 ...` |
 | M5 | ADR 0001~0011 | 완료 | `[lead] Phase 0 M5 ...` |
-| M6 | worktree·검증·인수인계 | 대기 | |
+| M6 | worktree·검증·인수인계 | 완료 | `[lead] Phase 0 M6 ...` |
 
 ## 사용자 지시 (상시)
 - GitHub private 레포 `seulstat/skala-ai-miniproject`(이 폴더만) 생성·remote `origin` 연결 완료. **분기점(CP0~CP4)마다 main을 push** (첫 push는 CP0 승인 시점)
@@ -66,5 +68,26 @@
 - `doc/adr/README.md` 색인 + design.md ↔ ADR 대응표
 - check.sh `ADR_CHECK_ENABLED=1`, 통과(FAIL 0·WARN 0). 필수 제목 누락 ADR로 FAIL 검출 확인
 
+## M6 완료 항목
+- fake 스모크: `tests/test_contracts.py::test_stub_graph_streams_contract_events_and_resumes` (GenericFakeChatModel router → 계약 이벤트 → AsyncSqliteSaver → interrupt payload 조회 → resume 승인)
+- worktree 4개 `.worktrees/{core,mcp,api,web}` (`feat/*`), 각각 setup_venv + check.sh FAIL 0 · WARN 0
+- check.sh: worktree에서는 main 작업 트리의 `.forbidden_patterns.local`을 사용
+- `doc/handoff/lead.md`(부록 A 양식), `doc/handoff/kickoff-prompts.md`(A1·A2·A4)
+
+## 마일스톤별 사용률 요약 (병렬 단계 예산 계획용)
+| 구간 | 증가 | 비고 |
+|---|---|---|
+| M1 환경·복사·design | +3%p | 원본 탐색 포함 |
+| M2 contracts | +4%p | 가장 큼 (설계 판단 + fixture 생성) |
+| M3 agent.md | +1%p | |
+| M4 check.sh | +1%p | |
+| M5 ADR 11개 | +2%p | 전부 전체 틀 |
+| M6 worktree·검증·인수인계 | 확인 대기 | |
+| Phase 0 합계 | 약 +12~13%p (예상) | 예산 40%p 대비 여유 |
+
+## 남은 항목
+- 없음. CP0 사용자 승인 대기
+
 ## 다음 시작점
-- M6: worktree 4개 + 각 setup_venv·check.sh, fake 스모크, `doc/handoff/lead.md`, 착수 프롬프트 초안(A1·A2·A4)
+- CP0 승인 → `git push -u origin main` → 각 worktree에서 kickoff-prompts.md로 A1·A2·A4 착수
+- 새 세션이 이어받을 때: "skala-ai-miniproject의 Lead다. agent.md, doc/handoff/lead.md, doc/handoff/lead-progress.md를 읽고 CP0 승인 여부를 사용자에게 확인한 뒤, 승인되면 main을 origin에 push하고 역할 agent 착수를 안내하라. 커밋에 AI 이름을 넣지 말 것."
