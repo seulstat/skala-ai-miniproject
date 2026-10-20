@@ -97,5 +97,5 @@
 - 없음. CP0 사용자 승인 대기
 
 ## 다음 시작점
-- CP0 승인 → `git push -u origin main` → 각 worktree에서 kickoff-prompts.md로 A1·A2·A4 착수
-- 새 세션이 이어받을 때: "skala-ai-miniproject의 Lead다. agent.md, doc/handoff/lead.md, doc/handoff/lead-progress.md를 읽고 CP0 승인 여부를 사용자에게 확인한 뒤, 승인되면 main을 origin에 push하고 역할 agent 착수를 안내하라. 커밋에 AI 이름을 넣지 말 것."
+- CP0 승인·push 완료(2026-10-20, `0b29d58`). Day2 오전 각 worktree에서 kickoff-prompts.md로 A1·A2·A4 착수. 일정 압축 조정안은 [next-steps.md](next-steps.md) — 확정 시 ADR-0010·work-plan §7 갱신
+- 새 세션이 이어받을 때: "skala-ai-miniproject의 Lead다. agent.md, doc/handoff/lead.md, doc/handoff/lead-progress.md, doc/handoff/next-steps.md를 읽어라. CP0은 통과·push됐고 A1·A2·A4가 worktree에서 작업 중이다. 먼저 사용자에게 현재 사용률을 묻고, 역할 agent의 보고·계약 변경 요청을 처리하며 CP1을 준비하라. 커밋에 AI 이름을 넣지 말 것."
