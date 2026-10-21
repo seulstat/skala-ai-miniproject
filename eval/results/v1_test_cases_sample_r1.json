@@ -1,0 +1,408 @@
+{
+  "version": "v1",
+  "model": "openai:gpt-4o-mini",
+  "summary": {
+    "n": 10,
+    "M1_routing": "10/10",
+    "M2_structured": "7/7",
+    "M3_banned_final": 0,
+    "M4_personalization": 5,
+    "M4_interview_fit": 5,
+    "M5_avg_seconds_generate": 13.31,
+    "M5_avg_seconds_all": 9.63,
+    "tool_calls_avg": 1.71,
+    "rewrites_avg": 0.71,
+    "errors": {}
+  },
+  "rows": [
+    {
+      "id": "S01",
+      "input": "고객 이탈을 미리 예측하는 모델을 만들었어요",
+      "expected": "express",
+      "intent": "express",
+      "rewrites": 0,
+      "tools": [
+        [
+          "search_my_experience",
+          "search_expression_bank",
+          "get_job_posting",
+          "get_job_posting"
+        ]
+      ],
+      "warning": null,
+      "card": {
+        "korean_prompt": "고객 이탈을 미리 예측하는 모델을 만들었어요",
+        "mode": "express",
+        "formal_expression": "I developed a predictive model to identify potential customer churn in an online shopping platform.",
+        "casual_expression": "I created a model to predict when customers might leave an online store.",
+        "answer_draft": null,
+        "chunks": [
+          {
+            "phrase": "predictive model to identify potential customer churn",
+            "note": "고객 이탈을 예측하는 모델을 만들었다는 의미로, 지원자의 경험과 관련이 깊습니다."
+          },
+          {
+            "phrase": "analyze customer behavior data",
+            "note": "고객 행동 데이터를 분석하는 업무와 연결되어, 이커머스 데이터 분석가로서의 역할을 강조합니다."
+          },
+          {
+            "phrase": "improve marketing strategies",
+            "note": "마케팅 전략을 개선하는 데 기여할 수 있다는 점을 부각시키는 표현입니다."
+          }
+        ],
+        "note": "이 표현은 지원자가 고객 이탈 예측 모델을 개발한 경험을 잘 전달합니다. 이커머스 데이터 분석가로서 고객 행동 데이터를 분석하고, 마케팅 전략을 개선하는 데 기여할 수 있음을 강조합니다. 난이도는 OPIc IM2 수준에 맞춰 적절하게 설정했습니다.",
+        "evidence": [
+          "experience.md > 고객 이탈 예측 졸업 프로젝트",
+          "job_posting > 자격 요건",
+          "job_posting > 주요 업무"
+        ]
+      },
+      "structured_ok": true,
+      "banned": [],
+      "seconds": 9.0,
+      "judge": {
+        "personalization": 5,
+        "interview_fit": 5,
+        "reason": "The expression accurately reflects the applicant's experience in developing a predictive model for customer churn, which is highly relevant to the role of an e-commerce data analyst. It incorporates specific terminology, such as 'predictive model to identify potential customer churn', that aligns with the job requirements and expectations, demonstrating the applicant's capability to connect their background with the job's core responsibilities. Furthermore, it emphasizes the potential impact on marketing strategies, which directly relates to the company's operations."
+      }
+    },
+    {
+      "id": "S02",
+      "input": "처음엔 정확도만 봤는데 쿠폰 비용까지 함께 보도록 평가 기준을 바꿨어요",
+      "expected": "express",
+      "intent": "express",
+      "rewrites": 0,
+      "tools": [
+        [
+          "search_expression_bank",
+          "search_my_experience"
+        ]
+      ],
+      "warning": null,
+      "card": {
+        "korean_prompt": "처음엔 정확도만 봤는데 쿠폰 비용까지 함께 보도록 평가 기준을 바꿨어요.",
+        "mode": "express",
+        "formal_expression": "Initially, I focused solely on accuracy, but I adjusted the evaluation criteria to also consider coupon costs.",
+        "casual_expression": "At first, I was just looking at accuracy, but then I changed the evaluation criteria to include coupon costs as well.",
+        "answer_draft": null,
+        "chunks": [
+          {
+            "phrase": "adjusted the evaluation criteria",
+            "note": "평가 기준을 조정했다는 의미로, 프로젝트에서의 변화와 개선을 강조할 수 있습니다."
+          },
+          {
+            "phrase": "consider coupon costs",
+            "note": "쿠폰 비용을 고려한다는 표현으로, 실제 비즈니스 상황에서의 중요성을 나타냅니다."
+          },
+          {
+            "phrase": "focused solely on accuracy",
+            "note": "정확도에만 집중했다는 표현으로, 초기 접근 방식을 설명할 때 유용합니다."
+          }
+        ],
+        "note": "이 표현은 프로젝트에서 평가 기준을 조정한 경험을 바탕으로 하며, 지원자가 문제를 해결하기 위해 어떻게 접근했는지를 보여줍니다. 면접에서 자신의 경험을 구체적으로 설명할 때 적합한 표현입니다.",
+        "evidence": [
+          "experience.md > 고객 이탈 예측 졸업 프로젝트 > 활동내용"
+        ]
+      },
+      "structured_ok": true,
+      "banned": [],
+      "seconds": 6.5,
+      "judge": {
+        "personalization": 5,
+        "interview_fit": 5,
+        "reason": "The response specifically addresses the candidate's experience in adjusting project evaluation criteria based on practical business needs, reflecting detailed knowledge about their project and its outcomes, including cost considerations. This level of detail is unique and aligns perfectly with the job advertisement's focus on sharing insights with stakeholders."
+      }
+    },
+    {
+      "id": "S03",
+      "input": "배송 지연의 61%가 특정 택배사의 집하 구간에 몰려 있다는 걸 찾았어요",
+      "expected": "express",
+      "intent": "express",
+      "rewrites": 0,
+      "tools": [
+        [
+          "search_my_experience",
+          "search_expression_bank",
+          "get_job_posting"
+        ]
+      ],
+      "warning": null,
+      "card": {
+        "korean_prompt": "배송 지연의 61%가 특정 택배사의 집하 구간에 몰려 있다는 걸 찾았어요",
+        "mode": "express",
+        "formal_expression": "I discovered that 61% of the delivery delays were concentrated in the pickup stages of specific courier companies.",
+        "casual_expression": "I found out that 61% of the delivery delays were happening at the pickup stages of certain courier services.",
+        "answer_draft": null,
+        "chunks": [
+          {
+            "phrase": "concentrated in the pickup stages",
+            "note": "특정 구간에 몰려 있다는 뜻으로, 데이터 분석 결과를 설명할 때 유용하게 쓰임."
+          },
+          {
+            "phrase": "delivery delays",
+            "note": "배송 지연을 간단하게 표현할 수 있는 용어."
+          },
+          {
+            "phrase": "specific courier companies",
+            "note": "특정 택배사를 지칭할 때 쓰는 표현."
+          }
+        ],
+        "note": "이 표현은 배송 지연의 원인을 데이터 분석을 통해 발견한 경험을 잘 설명합니다. 면접관에게 구체적인 수치를 제시하여 분석 능력을 강조할 수 있습니다. 또한, 지원자의 전공과 관련된 통계적 접근 방식을 보여줍니다.",
+        "evidence": [
+          "experience.md > 물류 스타트업 데이터 분석 인턴 (2개월) > 활동내용",
+          "job_posting > 자격 요건"
+        ]
+      },
+      "structured_ok": true,
+      "banned": [],
+      "seconds": 7.8,
+      "judge": {
+        "personalization": 5,
+        "interview_fit": 5,
+        "reason": "The response effectively highlights a specific analytical finding (61% of delivery delays) that directly relates to the job's requirements. It uses data to demonstrate the candidate's analytical skills, matching the job description by showing their ability to convey findings accurately and concisely. The language used is appropriate for an interview, reflecting the candidate's background in data analysis and statistical methods."
+      }
+    },
+    {
+      "id": "S04",
+      "input": "두 달 사이 변화라 계절 요인은 완전히 배제하지 못했다고 솔직하게 말하고 싶어요",
+      "expected": "express",
+      "intent": "express",
+      "rewrites": 2,
+      "tools": [
+        [
+          "search_expression_bank",
+          "get_job_posting",
+          "search_my_experience"
+        ],
+        [
+          "search_expression_bank",
+          "search_my_experience"
+        ],
+        [
+          "search_expression_bank",
+          "search_my_experience"
+        ]
+      ],
+      "warning": "재작성 2회 후에도 검수 미통과: R8 'I couldn't completely eliminate seasonal factors from the changes observed over the two-month period'; R8 'this is something I noted in my report'",
+      "card": {
+        "korean_prompt": "두 달 사이 변화라 계절 요인은 완전히 배제하지 못했다고 솔직하게 말하고 싶어요.",
+        "mode": "express",
+        "formal_expression": "I acknowledge that I couldn't completely eliminate seasonal factors from the changes observed over the two-month period, and this is something I noted in my report.",
+        "casual_expression": "I have to say that I couldn't fully rule out seasonal factors affecting the changes we've seen in the last two months, and I mentioned this in my report.",
+        "answer_draft": null,
+        "chunks": [
+          {
+            "phrase": "I couldn't completely eliminate seasonal factors",
+            "note": "계절 요인을 완전히 배제하지 못했다는 점을 솔직하게 인정하는 표현입니다."
+          },
+          {
+            "phrase": "this is something I noted in my report",
+            "note": "이 부분을 보고서에 언급했다는 표현으로, 분석의 투명성을 강조합니다."
+          },
+          {
+            "phrase": "I acknowledge that",
+            "note": "이 사실을 인정한다는 표현으로, 솔직한 태도를 보여줍니다."
+          }
+        ],
+        "note": "이 표현은 데이터 분석 과정에서의 솔직함과 투명성을 강조하며, 신입 데이터 분석가로서의 신뢰성을 높이는 데 도움이 됩니다. 면접관에게는 분석 결과의 한계를 인정하는 것이 중요하다는 점을 보여줄 수 있습니다.",
+        "evidence": [
+          "experience.md > 물류 스타트업 데이터 분석 인턴 (2개월) > 활동내용"
+        ]
+      },
+      "structured_ok": true,
+      "banned": [],
+      "seconds": 20.0,
+      "judge": {
+        "personalization": 5,
+        "interview_fit": 5,
+        "reason": "The applicant's response conveys honesty and transparency in data analysis, which aligns perfectly with the expectations of the hiring panel for the data analyst role. It integrates specific terminology relevant to the role, such as \"seasonal factors\" and emphasizes the importance of acknowledging limitations in analysis, demonstrating critical thinking and a solid understanding of the field."
+      }
+    },
+    {
+      "id": "S05",
+      "input": "분석 결과를 운영 팀장님이 매주 볼 수 있게 대시보드로 만들어 드렸어요",
+      "expected": "express",
+      "intent": "express",
+      "rewrites": 0,
+      "tools": [
+        [
+          "search_my_experience",
+          "get_job_posting"
+        ]
+      ],
+      "warning": null,
+      "card": {
+        "korean_prompt": "분석 결과를 운영 팀장님이 매주 볼 수 있게 대시보드로 만들어 드렸어요",
+        "mode": "express",
+        "formal_expression": "I created a dashboard to present the analysis results, allowing the operations manager to review them weekly.",
+        "casual_expression": "I made a dashboard so the operations manager could check the analysis results every week.",
+        "answer_draft": null,
+        "chunks": [
+          {
+            "phrase": "created a dashboard",
+            "note": "대시보드를 만들었다는 의미로, 데이터 분석 결과를 시각적으로 표현하는 데 적합한 표현이다."
+          },
+          {
+            "phrase": "present the analysis results",
+            "note": "분석 결과를 전달한다는 의미로, 면접에서 자신의 기여를 강조할 때 유용하다."
+          },
+          {
+            "phrase": "allowing the operations manager to review them weekly",
+            "note": "운영 팀장님이 매주 검토할 수 있도록 한다는 의미로, 지속적인 소통과 협업을 강조하는 표현이다."
+          }
+        ],
+        "note": "이 표현은 대시보드 제작 경험을 바탕으로, 운영 팀장님과의 소통을 강조하는 데 적합하다. 지원자는 데이터 분석가로서의 역할을 잘 수행할 수 있음을 보여줄 수 있다. 난이도는 OPIc IM2 수준에 맞춰 적절하게 설정했다.",
+        "evidence": [
+          "experience.md > 물류 스타트업 데이터 분석 인턴 (2개월) > 활동내용",
+          "job_posting > 주요 업무"
+        ]
+      },
+      "structured_ok": true,
+      "banned": [],
+      "seconds": 6.8,
+      "judge": {
+        "personalization": 5,
+        "interview_fit": 5,
+        "reason": "The expression accurately reflects the candidate's specific experience of creating a dashboard to communicate analysis results to the operations manager, which directly relates to the job posting requirements. It showcases relevant skills in data visualization and effective communication, demonstrating the candidate's ability to work with stakeholders, such as the operations manager and overseas logistics partners. Additionally, the tone is polite and professional, aligning well with the candidate's preference for a respectful demeanor in the interview."
+      }
+    },
+    {
+      "id": "S06",
+      "input": "Could you briefly introduce yourself?",
+      "expected": "answer",
+      "intent": "answer",
+      "rewrites": 1,
+      "tools": [
+        [
+          "search_my_experience",
+          "get_job_posting"
+        ],
+        [
+          "search_my_experience",
+          "get_job_posting"
+        ]
+      ],
+      "warning": null,
+      "card": {
+        "korean_prompt": "자기소개",
+        "mode": "answer",
+        "formal_expression": "I'd like to take on a career in e-commerce data analysis, where I can identify bottlenecks through data. This is what I verified during my internship: I analyzed delivery delays by segmenting the data, which highlighted the significant impact analysis can have on decision-making. I still need to prepare for the English interview, as I will need to communicate metrics with international logistics partners.",
+        "casual_expression": "I'm excited to start a career in e-commerce data analysis. During my internship, I looked into delivery delays and found that breaking down the data really helped in understanding the issues. I'm also getting ready for the English interview to share insights with international partners.",
+        "answer_draft": "I'd like to take on a career in e-commerce data analysis, where I can identify bottlenecks through data. This is what I verified during my internship: I analyzed delivery delays by segmenting the data, which highlighted the significant impact analysis can have on decision-making. I still need to prepare for the English interview, as I will need to communicate metrics with international logistics partners.",
+        "chunks": [
+          {
+            "phrase": "identify bottlenecks through data",
+            "note": "데이터를 통해 병목 현상을 찾는다는 의미로, 문제 해결 능력을 강조할 때 유용합니다."
+          },
+          {
+            "phrase": "analyzed delivery delays by segmenting the data",
+            "note": "배송 지연을 데이터 세분화로 분석했다는 경험을 강조하는 표현입니다."
+          },
+          {
+            "phrase": "communicate metrics with international partners",
+            "note": "국제 파트너와 지표를 소통해야 한다는 점을 부각시키는 표현입니다."
+          }
+        ],
+        "note": "지원자는 이커머스 데이터 분석가로서의 열정을 보여주고, 인턴 경험을 통해 분석의 중요성을 깨달았음을 강조합니다. 이는 지원 공고에서 요구하는 통계 및 데이터 분석 능력과 잘 연결됩니다.",
+        "evidence": [
+          "experience.md > 자기소개서 > 1. 지원동기",
+          "job_posting > 자격 요건"
+        ]
+      },
+      "structured_ok": true,
+      "banned": [],
+      "seconds": 14.6,
+      "judge": {
+        "personalization": 5,
+        "interview_fit": 5,
+        "reason": "The response effectively reflects the applicant's specific experiences and skills related to the job description. It highlights their analytical work during the internship, which is directly relevant to the role of an e-commerce data analyst. The language is polite and presents concrete quantitative results, enhancing the overall impact."
+      }
+    },
+    {
+      "id": "S07",
+      "input": "면접 질문: 분석 결과가 현업의 예상과 다를 때 어떻게 설득하겠습니까?",
+      "expected": "answer",
+      "intent": "answer",
+      "rewrites": 2,
+      "tools": [
+        [
+          "search_expression_bank",
+          "search_my_experience"
+        ],
+        [
+          "search_my_experience",
+          "search_my_experience"
+        ],
+        [
+          "search_my_experience",
+          "get_job_posting"
+        ]
+      ],
+      "warning": "재작성 2회 후에도 검수 미통과: R3 'I checked their perspectives first, and we collaboratively established the evaluation criteria'; R8 'I verified this part, but it still needs to be checked: aligning the analysis with business objectives can help stakeholders understand the value of the findings and facilitate informed decision-making.'",
+      "card": {
+        "korean_prompt": "분석 결과가 현업의 예상과 다를 때 어떻게 설득하겠습니까?",
+        "mode": "answer",
+        "formal_expression": "When analysis results differ from expectations, I would first ensure that I clearly present the data and the methodology used. For instance, during my project on customer churn prediction, I checked their perspectives first, and we collaboratively established the evaluation criteria that included both accuracy and cost implications. This approach could lead us to target the top 20% of at-risk customers effectively, capturing 71% of potential churners with a 2.3 times increase in coupon response rates. I verified this part, but it still needs to be checked: aligning the analysis with business objectives can help stakeholders understand the value of the findings and facilitate informed decision-making.",
+        "casual_expression": "If my analysis results don’t match expectations, I’d start by clearly showing the data and how I got there. In my churn prediction project, I checked with the team first about what criteria to use, including costs of wrong predictions. This helped us focus on the most at-risk customers and captured 71% of them, boosting our coupon response rates by 2.3 times. By connecting the analysis to business goals, I can help everyone see the value and make better decisions.",
+        "answer_draft": "When analysis results differ from expectations, I would first ensure that I clearly present the data and the methodology used. For instance, during my project on customer churn prediction, I checked their perspectives first, and we collaboratively established the evaluation criteria that included both accuracy and cost implications. This approach could lead us to target the top 20% of at-risk customers effectively, capturing 71% of potential churners with a 2.3 times increase in coupon response rates. I verified this part, but it still needs to be checked: aligning the analysis with business objectives can help stakeholders understand the value of the findings and facilitate informed decision-making.",
+        "chunks": [
+          {
+            "phrase": "collaboratively established the evaluation criteria",
+            "note": "협력하여 평가 기준을 설정하는 방법을 설명할 때 유용합니다."
+          },
+          {
+            "phrase": "capturing 71% of potential churners",
+            "note": "이탈 가능성이 있는 고객을 포착하는 성과를 강조할 때 사용합니다."
+          },
+          {
+            "phrase": "aligning the analysis with business objectives can help stakeholders understand the value",
+            "note": "분석 결과를 비즈니스 목표와 맞추는 방법이 이해관계자들에게 가치를 전달하는 데 어떻게 도움이 되는지를 강조할 때 적합합니다."
+          }
+        ],
+        "note": "이 표현은 분석 결과가 예상과 다를 때 어떻게 설득할지를 구체적으로 설명하는 데 적합합니다. 고객 이탈 예측 프로젝트에서의 경험을 통해 이해관계자와 협력하여 분석 기준을 설정하고, 비즈니스 목표와 연결하여 설득력을 높인 사례를 제시합니다. 신입 지원자로서의 겸손한 태도를 유지하면서도, 자신의 경험을 통해 문제를 해결하는 방법을 보여줄 수 있습니다.",
+        "evidence": [
+          "experience.md > 고객 이탈 예측 졸업 프로젝트 > 활동내용",
+          "job_posting > 자격 요건"
+        ]
+      },
+      "structured_ok": true,
+      "banned": [],
+      "seconds": 28.5,
+      "judge": {
+        "personalization": 5,
+        "interview_fit": 5,
+        "reason": "The response effectively integrates specific details from the applicant's background, such as the customer churn prediction project and the collaborative approach to establishing criteria for analysis. It clearly relates the experience to the job requirements, particularly in communicating with stakeholders and aligning analysis with business objectives, which matches the role of an e-commerce data analyst. The tone is also respectful and thoughtful, aligning with the applicant's preferred communication style."
+      }
+    },
+    {
+      "id": "S08",
+      "input": "오늘 복습할 카드 보여줘",
+      "expected": "review",
+      "intent": "review",
+      "rewrites": 0,
+      "tools": [],
+      "warning": null,
+      "seconds": 1.0
+    },
+    {
+      "id": "S09",
+      "input": "오늘 점심 메뉴 추천해줘",
+      "expected": "out_of_scope",
+      "intent": "out_of_scope",
+      "rewrites": 0,
+      "tools": [],
+      "warning": null,
+      "seconds": 1.1
+    },
+    {
+      "id": "S10",
+      "input": "파이썬으로 YOLO 학습 코드 짜줘",
+      "expected": "out_of_scope",
+      "intent": "out_of_scope",
+      "rewrites": 0,
+      "tools": [],
+      "warning": null,
+      "seconds": 1.0
+    }
+  ]
+}

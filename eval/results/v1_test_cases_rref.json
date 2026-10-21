@@ -1,0 +1,409 @@
+{
+  "version": "v1",
+  "model": "openai:gpt-4o-mini",
+  "summary": {
+    "n": 10,
+    "M1_routing": "10/10",
+    "M2_structured": "7/7",
+    "M3_banned_final": 0,
+    "M4_personalization": 4.71,
+    "M4_interview_fit": 4.86,
+    "M5_avg_seconds_generate": 14.21,
+    "M5_avg_seconds_all": 10.28,
+    "tool_calls_avg": 1.86,
+    "rewrites_avg": 0.86,
+    "errors": {}
+  },
+  "rows": [
+    {
+      "id": "T01",
+      "input": "제 연구는 AI가 틀릴 때를 미리 골라내는 거예요",
+      "expected": "express",
+      "intent": "express",
+      "rewrites": 0,
+      "tools": [
+        [
+          "search_expression_bank",
+          "search_my_experience",
+          "get_job_posting"
+        ]
+      ],
+      "warning": null,
+      "card": {
+        "korean_prompt": "제 연구는 AI가 틀릴 때를 미리 골라내는 거예요.",
+        "mode": "express",
+        "formal_expression": "My research focuses on identifying potential errors in AI predictions before they occur.",
+        "casual_expression": "I worked on a project that aimed to catch when AI might make mistakes ahead of time.",
+        "answer_draft": null,
+        "chunks": [
+          {
+            "phrase": "identifying potential errors",
+            "note": "AI의 예측에서 발생할 수 있는 오류를 식별하는 것."
+          },
+          {
+            "phrase": "before they occur",
+            "note": "문제가 발생하기 전에 미리 파악하는 것."
+          },
+          {
+            "phrase": "catch when AI might make mistakes",
+            "note": "AI가 실수를 할 가능성을 미리 포착하는 것."
+          }
+        ],
+        "note": "이 표현은 AI의 오류를 미리 파악하는 연구 경험을 설명하는 데 적합합니다. 지원자는 통계학과 경영학을 전공하며, 데이터 분석과 관련된 경험이 있으므로 이 표현이 잘 어울립니다. 난이도는 OPIc IM2 수준에 맞춰 부드럽고 정중한 느낌으로 설정했습니다.",
+        "evidence": [
+          "experience.md > 고객 이탈 예측 졸업 프로젝트 > 활동내용",
+          "job_posting > 주요 업무"
+        ]
+      },
+      "structured_ok": true,
+      "banned": [],
+      "seconds": 8.1,
+      "judge": {
+        "personalization": 5,
+        "interview_fit": 5,
+        "reason": "The applicant clearly articulates their research focus on identifying potential errors in AI predictions, which directly relates to their background in statistics and business. Their language is clear and fits the context of a job relevant to data analysis in e-commerce, aligning with the requirements stated in the job posting."
+      }
+    },
+    {
+      "id": "T02",
+      "input": "정확도는 97%였는데 틀린 답에도 확신을 가졌어요",
+      "expected": "express",
+      "intent": "express",
+      "rewrites": 1,
+      "tools": [
+        [
+          "search_expression_bank",
+          "search_my_experience"
+        ],
+        [
+          "search_expression_bank",
+          "search_my_experience"
+        ]
+      ],
+      "warning": null,
+      "card": {
+        "korean_prompt": "정확도는 97%였는데 틀린 답에도 확신을 가졌어요.",
+        "mode": "express",
+        "formal_expression": "While the model achieved an accuracy of 97%, I realized that I could have been overly confident in the incorrect predictions.",
+        "casual_expression": "The model hit 97% accuracy, but I noticed I was a bit too confident about the wrong predictions.",
+        "answer_draft": null,
+        "chunks": [
+          {
+            "phrase": "could have been overly confident in the incorrect predictions",
+            "note": "틀린 예측에 대한 지나친 확신을 표현하며, 겸손한 태도를 강조할 수 있습니다."
+          },
+          {
+            "phrase": "achieved an accuracy of 97%",
+            "note": "모델의 정확도를 언급하며, 데이터 분석의 신뢰성을 강조하는 데 유용합니다."
+          },
+          {
+            "phrase": "I realized that",
+            "note": "자신의 인식 변화를 설명하며, 분석가로서의 성장 과정을 보여줄 수 있는 표현입니다."
+          }
+        ],
+        "note": "이 표현은 데이터 분석 과정에서의 경험을 바탕으로, 모델의 정확도와 예측에 대한 확신을 동시에 언급하여 분석가로서의 통찰력을 강조하는 데 적합합니다. 지원자는 고객 이탈 예측 모델을 개발하며 정확도 외에도 다른 지표를 고려해야 한다는 점을 배운 경험이 있으므로, 이 표현이 잘 어울립니다.",
+        "evidence": [
+          "experience.md > 고객 이탈 예측 졸업 프로젝트 > 활동내용"
+        ]
+      },
+      "structured_ok": true,
+      "banned": [],
+      "seconds": 13.1,
+      "judge": {
+        "personalization": 5,
+        "interview_fit": 5,
+        "reason": "이 문장은 지원자가 고객 이탈 예측 프로젝트에서 배운 중요한 교훈을 반영하고 있고, 데이터 분석가로서의 통찰력을 잘 전달합니다. 특히 97%의 정확도를 언급하며 겸손하게 틀린 예측에 대한 확신을 표현하는 것은 면접에서 긍정적인 인상을 줄 수 있습니다."
+      }
+    },
+    {
+      "id": "T03",
+      "input": "그 부분은 아직 현장에서 확인해봐야 할 것 같습니다",
+      "expected": "express",
+      "intent": "express",
+      "rewrites": 1,
+      "tools": [
+        [
+          "search_expression_bank",
+          "get_job_posting",
+          "search_my_experience"
+        ],
+        [
+          "search_expression_bank",
+          "search_my_experience"
+        ]
+      ],
+      "warning": null,
+      "card": {
+        "korean_prompt": "그 부분은 아직 현장에서 확인해봐야 할 것 같습니다.",
+        "mode": "express",
+        "formal_expression": "This could lead to the need for verification on-site.",
+        "casual_expression": "This might mean we need to check that part in the field.",
+        "answer_draft": null,
+        "chunks": [
+          {
+            "phrase": "could lead to the need for verification on-site",
+            "note": "현장에서 확인이 필요할 수 있다는 의미로, 겸손하게 접근하는 표현입니다."
+          },
+          {
+            "phrase": "might mean we need to check that part in the field",
+            "note": "현장에서 확인해야 할 필요성을 부드럽게 전달하는 표현입니다."
+          },
+          {
+            "phrase": "This could lead to",
+            "note": "어떤 결과를 초래할 수 있다는 의미로, 불확실성을 인정하는 표현입니다."
+          }
+        ],
+        "note": "이 표현은 물류 스타트업 인턴 경험과 관련이 있으며, 현장에서의 데이터 확인이 중요함을 강조합니다. 신입으로서 겸손하게 의견을 제시하는 데 적합합니다.",
+        "evidence": [
+          "experience.md > 자기소개서 > 1. 지원동기"
+        ]
+      },
+      "structured_ok": true,
+      "banned": [],
+      "seconds": 13.2,
+      "judge": {
+        "personalization": 4,
+        "interview_fit": 5,
+        "reason": "This response effectively reflects the need for on-site verification, which is aligned with the applicant's internship experience in logistics. The language used is soft and polite, complying with the candidate's tone preference. It also connects to the interview's focus on clear communication and the importance of data verification, making it suitable for the role."
+      }
+    },
+    {
+      "id": "T04",
+      "input": "입사하면 이 분야를 많이 배우고 싶습니다",
+      "expected": "express",
+      "intent": "express",
+      "rewrites": 1,
+      "tools": [
+        [
+          "search_expression_bank",
+          "get_job_posting",
+          "search_my_experience"
+        ],
+        [
+          "search_expression_bank",
+          "search_my_experience"
+        ]
+      ],
+      "warning": null,
+      "card": {
+        "korean_prompt": "입사하면 이 분야를 많이 배우고 싶습니다",
+        "mode": "express",
+        "formal_expression": "I'd like to take on more responsibilities in this field once I join the team.",
+        "casual_expression": "I’d love to get more involved in this field when I get in.",
+        "answer_draft": null,
+        "chunks": [
+          {
+            "phrase": "take on more responsibilities",
+            "note": "더 많은 책임을 맡고 싶다는 의지를 표현할 때 사용."
+          },
+          {
+            "phrase": "get more involved",
+            "note": "더 많이 참여하고 싶다는 뜻으로, 팀의 일원으로서의 열정을 나타냄."
+          },
+          {
+            "phrase": "once I join the team",
+            "note": "팀에 합류한 후라는 의미로, 입사 후의 포부를 나타낼 때 적합."
+          }
+        ],
+        "note": "이 표현은 지원자가 이커머스 데이터 분석가로서의 역할에 대한 열정을 보여주며, 팀에 합류한 후 배우고 성장하고 싶다는 의지를 잘 전달합니다. 이는 면접관에게 긍정적인 인상을 줄 수 있습니다.",
+        "evidence": [
+          "experience.md > 자기소개서 > 1. 지원동기"
+        ]
+      },
+      "structured_ok": true,
+      "banned": [],
+      "seconds": 13.3,
+      "judge": {
+        "personalization": 4,
+        "interview_fit": 4,
+        "reason": "The expression reflects the candidate's eagerness to learn and grow in the field after joining the team, aligning well with their goal for the e-commerce data analyst role. It shows a proactive attitude suitable for an entry-level position, albeit it could include more specific references to their projects or skills to enhance its impact."
+      }
+    },
+    {
+      "id": "T05",
+      "input": "구청 실무자 지적을 듣고 목표를 다시 세웠어요",
+      "expected": "express",
+      "intent": "express",
+      "rewrites": 0,
+      "tools": [
+        [
+          "search_expression_bank",
+          "search_my_experience"
+        ]
+      ],
+      "warning": null,
+      "card": {
+        "korean_prompt": "구청 실무자 지적을 듣고 목표를 다시 세웠어요",
+        "mode": "express",
+        "formal_expression": "After receiving feedback from the local government officials, I reassessed my goals.",
+        "casual_expression": "I took the feedback from the local officials and set new goals.",
+        "answer_draft": null,
+        "chunks": [
+          {
+            "phrase": "reassessed my goals",
+            "note": "목표를 다시 세웠다는 의미로, 목표를 재조정하는 상황에서 사용됩니다."
+          },
+          {
+            "phrase": "received feedback",
+            "note": "피드백을 받았다는 의미로, 다른 사람의 의견을 듣는 상황에서 유용합니다."
+          },
+          {
+            "phrase": "local government officials",
+            "note": "구청 실무자를 영어로 표현한 것으로, 특정 직무나 역할을 언급할 때 적합합니다."
+          }
+        ],
+        "note": "구청 실무자의 피드백을 듣고 목표를 다시 세웠다는 내용은, 문제를 인식하고 개선 방향을 설정하는 능력을 보여줍니다. 이 표현은 면접에서 자신의 성장 가능성을 강조하는 데 적합합니다.",
+        "evidence": [
+          "experience.md > 자기소개서 > 1. 지원동기",
+          "experience.md > 물류 스타트업 데이터 분석 인턴 (2개월) > 활동내용"
+        ]
+      },
+      "structured_ok": true,
+      "banned": [],
+      "seconds": 6.4,
+      "judge": {
+        "personalization": 5,
+        "interview_fit": 5,
+        "reason": "이 지원자는 고객 이탈 예측 프로젝트와 물류 스타트업 인턴 경험을 통해 실질적인 데이터 분석 경험을 쌓았으며, 이를 통해 문제 해결 과정에서 전문가의 피드백을 반영하여 결과물을 개선한 경험이 강조되고 있습니다. 목표를 재조정하는 과정에서 보여준 성장 가능성은 면접에서 자신의 강점을 잘 드러낼 수 있는 부분입니다."
+      }
+    },
+    {
+      "id": "T06",
+      "input": "Could you briefly introduce yourself?",
+      "expected": "answer",
+      "intent": "answer",
+      "rewrites": 1,
+      "tools": [
+        [
+          "search_my_experience",
+          "get_job_posting"
+        ],
+        [
+          "search_my_experience",
+          "get_job_posting"
+        ]
+      ],
+      "warning": null,
+      "card": {
+        "korean_prompt": "자기소개 해주세요.",
+        "mode": "answer",
+        "formal_expression": "I'd like to contribute to the e-commerce sector, where I can leverage my analytical skills to identify bottlenecks using data. During my internship, I analyzed the causes of delivery delays and recognized the significant impact that data analysis can have on decision-making. I'm also preparing for the English interview, as it's essential to communicate metrics effectively with overseas partners. I hold a dual degree in Business Administration and Statistics, and I have experience with SQL and Python, which I believe will be valuable in this role.",
+        "casual_expression": "I’m excited to contribute to the e-commerce field by using data to find bottlenecks. In my internship, I looked into delivery delays and saw how much data analysis can influence decisions. I’m also getting ready for the English interview since I’ll need to share metrics with international partners. I have a dual degree in Business Administration and Statistics, and I’m familiar with SQL and Python.",
+        "answer_draft": "I'd like to contribute to the e-commerce sector, where I can leverage my analytical skills to identify bottlenecks using data. During my internship, I analyzed the causes of delivery delays and recognized the significant impact that data analysis can have on decision-making. I'm also preparing for the English interview, as it's essential to communicate metrics effectively with overseas partners. I hold a dual degree in Business Administration and Statistics, and I have experience with SQL and Python, which I believe will be valuable in this role.",
+        "chunks": [
+          {
+            "phrase": "leverage my analytical skills",
+            "note": "분석 능력을 활용하다. 이커머스 데이터 분석가로서의 역할과 잘 연결됨."
+          },
+          {
+            "phrase": "significant impact that data analysis can have",
+            "note": "데이터 분석이 미칠 수 있는 중요한 영향. 데이터 분석의 중요성을 강조하는 표현."
+          },
+          {
+            "phrase": "communicate metrics effectively with overseas partners",
+            "note": "해외 파트너와 지표를 효과적으로 소통하다. 이 직무에서 필요한 영어 소통 능력을 나타냄."
+          }
+        ],
+        "note": "이 지원자는 이커머스 데이터 분석가로서의 역할에 적합한 경험을 가지고 있으며, 자기소개에서 자신의 분석 능력과 인턴 경험을 잘 연결하였습니다. 또한, 영어 면접 준비도 강조하여 국제적인 업무에 대한 준비성을 보여줍니다.",
+        "evidence": [
+          "experience.md > 자기소개서 > 1. 지원동기",
+          "job_posting > 자격 요건"
+        ]
+      },
+      "structured_ok": true,
+      "banned": [],
+      "seconds": 16.3,
+      "judge": {
+        "personalization": 5,
+        "interview_fit": 5,
+        "reason": "The candidate effectively integrates their analytical skills and relevant internship experiences into their self-introduction, clearly highlighting their ability to communicate metrics with overseas partners in English. They accurately reflect the job posting requirements, specifically the emphasis on data analysis's impact on decision-making, and have demonstrated familiarity with SQL and Python, which are crucial for the role."
+      }
+    },
+    {
+      "id": "T07",
+      "input": "면접 질문: 현장에서 모델 성능이 떨어지면 어떻게 대응하겠습니까?",
+      "expected": "answer",
+      "intent": "answer",
+      "rewrites": 2,
+      "tools": [
+        [
+          "search_my_experience",
+          "get_job_posting"
+        ],
+        [
+          "search_my_experience",
+          "get_job_posting"
+        ],
+        [
+          "search_my_experience",
+          "get_job_posting"
+        ]
+      ],
+      "warning": "재작성 2회 후에도 검수 미통과: R1 'I would like to take on analyzing the underlying factors contributing to the drop.'; R8 'I verified this, but I acknowledge that this part still needs to be checked.'",
+      "card": {
+        "korean_prompt": "현장에서 모델 성능이 떨어지면 어떻게 대응하겠습니까?",
+        "mode": "answer",
+        "formal_expression": "If the model's performance declines in the field, I would like to take on analyzing the underlying factors contributing to the drop. For example, during my graduation project, I initially focused solely on accuracy metrics. However, I learned that evaluating the model based on recall and cost-effectiveness was crucial. This adjustment allowed us to capture 71% of customers likely to churn by targeting only the top 20% of at-risk customers. I verified this, but I acknowledge that this part still needs to be checked. I believe that aligning evaluation criteria with real-world business needs is essential for effective data analysis.",
+        "casual_expression": "If the model isn't performing well, I'd like to help figure out what's causing the issue. In my graduation project, I learned that just looking at accuracy wasn't enough. By focusing on recall and costs, we managed to reach 71% of customers likely to leave by targeting the top 20% at risk. I verified this, but I know that this part still needs to be checked. I think it's really important to adjust our approach based on what the business needs.",
+        "answer_draft": "If the model's performance declines in the field, I would like to take on analyzing the underlying factors contributing to the drop. For example, during my graduation project, I initially focused solely on accuracy metrics. However, I learned that evaluating the model based on recall and cost-effectiveness was crucial. This adjustment allowed us to capture 71% of customers likely to churn by targeting only the top 20% of at-risk customers. I verified this, but I acknowledge that this part still needs to be checked. I believe that aligning evaluation criteria with real-world business needs is essential for effective data analysis.",
+        "chunks": [
+          {
+            "phrase": "aligning evaluation criteria with real-world business needs",
+            "note": "현실적인 비즈니스 요구에 맞춰 평가 기준을 조정하는 것의 중요성을 강조하는 표현."
+          },
+          {
+            "phrase": "taking on analyzing the underlying factors contributing to the drop",
+            "note": "성능 저하의 원인을 분석하는 과정에서 사용할 수 있는 표현."
+          },
+          {
+            "phrase": "targeting only the top 20% of at-risk customers",
+            "note": "위험에 처한 고객을 선별하여 타겟팅하는 방법을 설명할 때 유용한 표현."
+          }
+        ],
+        "note": "모델 성능 저하에 대한 대응 방안을 설명하면서, 과거 프로젝트 경험을 통해 배운 점을 강조합니다. 이는 지원자가 데이터 분석가로서의 역량을 보여주고, 현업의 요구에 맞춰 문제를 해결할 수 있는 능력을 강조하는 데 적합합니다. 난이도는 OPIc IM2 수준에 맞춰 조정했습니다.",
+        "evidence": [
+          "experience.md > 고객 이탈 예측 졸업 프로젝트 > 활동내용",
+          "job_posting > 자격 요건"
+        ]
+      },
+      "structured_ok": true,
+      "banned": [],
+      "seconds": 29.1,
+      "judge": {
+        "personalization": 5,
+        "interview_fit": 5,
+        "reason": "The applicant's response effectively integrates specific project experiences and quantifiable outcomes from their graduation project on customer churn prediction. It highlights their analytical skills and adaptability to business needs by mentioning the adjustment of evaluation metrics, which aligns well with the requirements of the job posting for an eCommerce data analyst role. The language is appropriate for the OPIc IM2 level, demonstrating confidence in discussing complex topics in English."
+      }
+    },
+    {
+      "id": "T08",
+      "input": "오늘 복습할 카드 보여줘",
+      "expected": "review",
+      "intent": "review",
+      "rewrites": 0,
+      "tools": [],
+      "warning": null,
+      "seconds": 1.1
+    },
+    {
+      "id": "T09",
+      "input": "오늘 점심 메뉴 추천해줘",
+      "expected": "out_of_scope",
+      "intent": "out_of_scope",
+      "rewrites": 0,
+      "tools": [],
+      "warning": null,
+      "seconds": 1.0
+    },
+    {
+      "id": "T10",
+      "input": "파이썬으로 YOLO 학습 코드 짜줘",
+      "expected": "out_of_scope",
+      "intent": "out_of_scope",
+      "rewrites": 0,
+      "tools": [],
+      "warning": null,
+      "seconds": 1.2
+    }
+  ]
+}

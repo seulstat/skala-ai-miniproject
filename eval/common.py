@@ -72,7 +72,7 @@ def summarize(rows: list[dict]) -> dict:
         "M3_banned_final": sum(len(r.get("banned", [])) for r in gen),
         "M4_personalization": _avg([r["judge"]["personalization"] for r in judged]),
         "M4_interview_fit": _avg([r["judge"]["interview_fit"] for r in judged]),
-        "M5_avg_seconds_generate": _avg([r["seconds"] for r in gen]),
+        "M5_avg_seconds_generate": _avg([r["seconds"] for r in gen if r.get("structured_ok")]),   # 성공한 카드만 (실패는 errors)
         "M5_avg_seconds_all": _avg([r["seconds"] for r in rows]),
         "tool_calls_avg": _avg([len(r.get("tools", [])) for r in gen if r.get("structured_ok")]),
         "rewrites_avg": _avg([r.get("rewrites", 0) for r in gen if r.get("structured_ok")]),
