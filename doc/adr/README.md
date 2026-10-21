@@ -17,6 +17,9 @@
 | [0010](0010-roles-worktree-parallel.md) | 역할 분담과 worktree 병렬 진행 (테스트 7 → CP1) | Accepted | 2026-10-20 | Lead | |
 | [0011](0011-deps-in-contracts.md) | Deps 정의를 contracts/deps.py로, 조립은 build_deps() | Accepted | 2026-10-20 | Lead | design 초안 "agent/deps.py에 Deps 정의"를 대체 |
 | [0012](0012-error-handling-4layer.md) | 오류 처리를 4계층 분류 + 재시도 가능 여부 + ErrorRaised 이벤트로 | Accepted | 2026-10-20 | Lead | 0006의 오류 처리 부분을 대체 |
+| [0013](0013-fake-model-needs-bind-tools.md) | 테스트용 fake 모델에 bind_tools를 추가한 서브클래스 | Accepted | 2026-10-20 | core | ADR-0001 보완 |
+| [0014](0014-explicit-writer-for-nested-subgraphs.md) | 중첩 서브그래프·Tool에는 바깥 노드가 writer를 넘긴다 | Accepted | 2026-10-20 | core | |
+| [0015](0015-reviewer-persona-rules-via-paths-not-mcp-prompt.md) | Reviewer가 MCP Prompt 대신 paths로 규칙 읽기 | **Rejected** | 2026-10-20 | core | ADR-0004 유지 |
 
 ## design.md ↔ ADR 대응
 

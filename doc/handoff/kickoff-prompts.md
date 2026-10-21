@@ -67,6 +67,7 @@ mcp_server.py, rag.py, agent/mcp_client.py, templates/, tests/test_mcp_*.py, doc
 - mcp_server.py(fastmcp, stdio, 서버 이름 contracts.mcp_spec.SERVER_NAME): Tool search_my_experience·search_expression_bank(SearchArgs), Resource posting://{section}, Prompt persona_review_prompt(인자 없음 — DataPaths.persona_rules 내용을 agent.prompts.reviewer_prompt(rules)로 렌더링한 system 프롬프트를 돌려준다). 이름·인자는 contracts.mcp_spec 상수만 사용
 - rag.py: `.config` 의존(TODO)을 DataPaths.from_env()·EMBEDDING_MODEL로 교체. 제목 단위 분할 → 임베딩 → 코사인 검색, 파일 mtime 변경 시 재색인, 결과에 contracts.mcp_spec.LABEL_* 형식 출처 라벨. EMBEDDING_MODEL=fake면 네트워크 없는 fake 임베딩
 - agent/mcp_client.py: coach 서버용으로 조정, find_* 탐색 유지, 의도적 flaky 데모 제거, contracts.deps.MCPPort 충족(call_tool은 str 반환, server 인자 없이 동작)
+- A1 코드가 main에 이미 병합돼 있다. agent/deps.py::_build_mcp의 호출 형태 `MCPClient(flaky_first_tool_call=False, server_scripts={SERVER_NAME: 경로})` → `await client.start()`(종료는 `stop()`)를 그대로 지원한다(flaky 기능은 없애되 인자는 받아서 무시). agent/tools.py·reviewer_agent.py가 MCPPort를 어떻게 부르는지 읽고 맞춘다 (A1 파일은 수정 금지)
 - 표현집이 없으면 templates/expression_bank.template.json, 규칙은 DataPaths.persona_rules 사용
 - 오류 계약(contracts.deps.MCPPort docstring, ADR-0012): 응답 지연은 asyncio.TimeoutError 그대로(호출부가 재시도), 서버 연결 불가는 ToolError("MCP_UNAVAILABLE"), 서버 쪽 Tool 예외는 ToolError("TOOL_EXECUTION_ERROR"). posting:// Resource는 캐시하지 않고 매번 읽는다. Tool·Resource·Prompt docstring에 언제 쓰는지·인자 예시를 구체적으로 쓴다
 

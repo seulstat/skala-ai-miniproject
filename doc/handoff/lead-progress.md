@@ -14,6 +14,7 @@
 | — | CP0 리뷰 반영 (ADR-0012 등) | 측정 불가 | 같은 구간에 사용자의 강의자료 PDF→MD 변환 작업이 섞여 증가분을 분리할 수 없음 |
 | 19:50 이후 | 5시간 창 재설정 | 0% | 새 창 기준선. 병렬 단계 예산은 이 값부터 계산 |
 | 10/21 A1 2차 검증 후 | A1 구현·재작업 + Lead 검증 | 19% | 새 창 기준 누적. A1 세션(Sonnet) 사용량 포함 |
+| 10/21 A1 최종 수정 후 | A1 3차 수정 + CP1 1단계 병합 | 22% | |
 
 ## 마일스톤 상태
 
@@ -103,8 +104,14 @@
   - 0015 Reviewer가 MCP Prompt 대신 paths → **Reject**. 원인은 Lead 지시서 문구("deps.paths 기반")와 ADR-0004의 충돌 — 지시서를 고침. Reviewer는 `deps.mcp.get_prompt(persona_review_prompt)`로 규칙을 받고, A2 서버는 `agent.prompts.reviewer_prompt(rules)`로 렌더링
 - A1 재작업 요청: Reviewer MCP Prompt 전환 + 테스트, graph.py 200줄 이하 분리, main merge
 
+## CP1 1단계 (2026-10-21)
+- A1 3차 검증 통과(`64245b2`: Reviewer가 get_prompt 반환값을 그대로 system으로, 테스트 `==` 검증). feat/core → main 선병합(`8e56130`), check.sh FAIL 0 · WARN 0, 테스트 core 20 + 계약 43
+- ADR 0013·0014 Accepted, 0015 Rejected(Lead 판정 절 추가), 색인 등록
+- A2 지시서에 `_build_mcp` 호출 형태 호환 조건 추가
+
 ## 남은 항목
-- A1 재작업 → CP1(A1+A2)
+- A2 착수·완료 → CP1 2단계(feat/mcp 병합, 실제 MCP + fake LLM 그래프 E2E, 사용자 리뷰 게이트, push) → A3 착수
+- A4 착수 (독립)
 
 ## 다음 시작점
 - CP0 승인·push 완료(2026-10-20, `0b29d58`). Day2 오전 각 worktree에서 kickoff-prompts.md로 A1·A2·A4 착수. 일정 압축 조정안은 [next-steps.md](next-steps.md) — 확정 시 ADR-0010·work-plan §7 갱신

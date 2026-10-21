@@ -1,6 +1,6 @@
 # ADR-0014: 중첩 서브그래프·Tool에는 get_stream_writer()를 직접 부르지 않고 바깥 노드가 캡처해 넘긴다
 
-- 상태: Proposed
+- 상태: Accepted (Lead, 2026-10-21 CP1 1단계)
 - 날짜: 2026-10-20
 - 작성: core
 - 관련: design.md §2 "Multi-Agent"·§5 SSE 이벤트, ADR-0002(MCP 래퍼 Tool), ADR-0004(Coach·Reviewer 서브그래프)

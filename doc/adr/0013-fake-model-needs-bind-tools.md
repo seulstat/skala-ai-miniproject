@@ -1,6 +1,6 @@
 # ADR-0013: 테스트용 fake 모델에 bind_tools를 추가한 서브클래스를 쓴다
 
-- 상태: Proposed
+- 상태: Accepted (Lead, 2026-10-21 CP1 1단계)
 - 날짜: 2026-10-20
 - 작성: core
 - 관련: design.md §2 "LLM 계층", ADR-0001(GenericFakeChatModel 채택), agent/llm.py

@@ -1,6 +1,6 @@
 # ADR-0015: Reviewer는 persona_rules를 deps.paths에서 직접 읽는다 (MCP Prompt 미사용) — Lead 확인 필요
 
-- 상태: Proposed
+- 상태: Rejected (Lead, 2026-10-21)
 - 날짜: 2026-10-20
 - 작성: core
 - 관련: design.md §3 "MCP" 행("Prompt 1"), ADR-0002·ADR-0004("Reviewer는 MCP Prompt persona_review_prompt로
@@ -35,3 +35,7 @@ A2의 MCP 서버가 완성되면 이 결정을 재검토해야 한다 — 특히
   reviewer_agent.py가 deps.mcp.get_prompt를 쓰도록 바꾸는 후속 작업을 A1(또는 CP1 이후 통합 작업)에 배정한다.
 - 검증 방법: tests/test_core_reviewer.py (현재는 deps.paths 경로만 검증). MCP 경로로 바뀌면 fake MCP의
   get_prompt 반환값을 reviewer_prompt에 그대로 넣는 테스트로 교체.
+
+## Lead 판정 (2026-10-21)
+Rejected. Reviewer가 MCP Prompt로 검수 규칙을 받는 것은 ADR-0004·design §3(MCP Prompt 1)의 결정이고, 평가 기술 요소의 근거다. 충돌의 원인은 Lead 지시서 문구("deps.paths 기반")였으며 지시서를 고쳤다. fake MCPPort에도 `get_prompt`가 있어 A2 완성 전에도 구현·테스트할 수 있었다.
+후속: `agent/reviewer_agent.py`가 `deps.mcp.get_prompt(PROMPT_PERSONA_REVIEW, {})`의 반환값(서버가 `reviewer_prompt(rules)`로 렌더링)을 그대로 system 메시지로 쓰도록 수정됨 (feat/core `b112e26`·`64245b2`).
