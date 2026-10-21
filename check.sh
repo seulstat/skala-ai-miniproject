@@ -90,7 +90,7 @@ fi
 
 section "⑥ 파일 길이 (>${MAX_LINES}줄 경고)"
 long=$(echo "$TEXT_FILES" | grep -E '\.(py|js|html|vue|css)$' | grep -vE '^(contracts/fixtures|eval/v1)/' \
-  | while read -r f; do n=$(wc -l < "$f"); [ "$n" -gt $MAX_LINES ] && echo "$f ($n줄)"; done)
+  | while read -r f; do n=$(wc -l < "$f"); [ "$n" -gt $MAX_LINES ] && echo "$f (${n}줄)"; done)
 [ -z "$long" ] && pass "200줄 초과 없음" || { echo "$long"; warn "200줄 초과 파일 — 분리 검토"; }
 
 section "⑦ 커밋 메시지 (형식, AI 이름 금지)"

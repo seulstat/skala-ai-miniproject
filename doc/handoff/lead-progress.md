@@ -93,8 +93,17 @@
 - SSE_HEADERS(p.114), Resource 캐시 금지·docstring 품질(p.47·p.45), ADR-0002(MultiServerMCPClient 기각 근거)·0006(PostgreSQL 대안, HITL 위치)·0009(LangSmith 혼합 평가) 보강
 - design §2·§5·§6(테스트 11개)·§7·§9, work-plan §5·§6, agent.md, kickoff-prompts, lead.md 갱신. fixture 24개, 계약 테스트 43개
 
+## A1 1차 검증 (2026-10-21, feat/core `70ff199`)
+- Lead가 core worktree에서 check.sh 재실행: FAIL 0 · WARN 1(색인 미등록 ADR, 예상됨). 테스트 core 17 + 계약 43 통과, 소유권 위반 없음, 계약 미변경
+- **check.sh ⑥ 버그 수정**(A1 발견): `$n줄`이 set -u에서 unbound로 죽고 pipefail로 조용히 PASS → `${n}줄`. agent/graph.py 206줄 경고가 이제 나온다
+- Proposed ADR 판정 (CP1 병합 때 상태·색인 확정):
+  - 0013 fake 모델 bind_tools → **Accept**
+  - 0014 중첩 서브그래프 writer 명시 전달 → **Accept**
+  - 0015 Reviewer가 MCP Prompt 대신 paths → **Reject**. 원인은 Lead 지시서 문구("deps.paths 기반")와 ADR-0004의 충돌 — 지시서를 고침. Reviewer는 `deps.mcp.get_prompt(persona_review_prompt)`로 규칙을 받고, A2 서버는 `agent.prompts.reviewer_prompt(rules)`로 렌더링
+- A1 재작업 요청: Reviewer MCP Prompt 전환 + 테스트, graph.py 200줄 이하 분리, main merge
+
 ## 남은 항목
-- 없음. CP0 사용자 승인 대기
+- A1 재작업 → CP1(A1+A2)
 
 ## 다음 시작점
 - CP0 승인·push 완료(2026-10-20, `0b29d58`). Day2 오전 각 worktree에서 kickoff-prompts.md로 A1·A2·A4 착수. 일정 압축 조정안은 [next-steps.md](next-steps.md) — 확정 시 ADR-0010·work-plan §7 갱신
