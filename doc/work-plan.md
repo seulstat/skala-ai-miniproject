@@ -207,7 +207,7 @@ skala-ai-miniproject/
 | 위험 | 대응 |
 |---|---|
 | 작업 중 계약 변경이 필요 | agent는 수정하지 않고 Lead에 요청 → Lead가 계약·ADR 수정 후 영향받는 agent에 재통지 |
-| ollama 소형 모델의 구조화 출력·Tool 호출 실패 | QUALITY_MODEL을 qwen3:8b 이상으로, ollama는 스모크 확인용, 최종 확인·측정은 OpenAI (실패율 자체를 한계로 기록) |
+| ollama 소형 모델의 구조화 출력·Tool 호출 실패 | QUALITY_MODEL은 qwen3.5:4b (qwen3:8b는 구조화 출력 실패 — ADR-0019), ollama는 스모크 확인용, 최종 확인·측정은 OpenAI (실패율 자체를 한계로 기록) |
 | worktree 병합 충돌 | 소유권 분리로 예방, 공유 파일은 Lead만 수정, 병합 순서 고정 |
 | 일정 지연 | 컷 규칙 — P1 제외, 측정·PPT 우선 |
 | 토큰 사용 한도 | Lead는 새 세션에서 시작, 역할 agent는 Sonnet, CP 판정은 `check.sh` 결과 위주 |

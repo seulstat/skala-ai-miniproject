@@ -23,6 +23,7 @@
 | 0016 | 웹 계약 보완: REST 응답 본문·프로필 404·BACKEND_UNAVAILABLE | Accepted (계약 반영 완료, 파일은 CP3 병합) | 2026-10-21 | web | |
 | [0017](0017-api-drives-graph-turn-reset-lock-retry.md) | API가 새 턴 초기화·스레드 락·저장 재시도를 맡는다 | Accepted | 2026-10-21 | api | |
 | [0018](0018-empty-structured-output-is-llm-output-invalid.md) | 빈 구조화 출력은 LLM_OUTPUT_INVALID | Accepted | 2026-10-21 | api | |
+| [0019](0019-ollama-quality-model-qwen35-4b.md) | ollama 품질 모델을 qwen3.5:4b로 | Accepted | 2026-10-21 | Lead | |
 
 ## design.md ↔ ADR 대응
 

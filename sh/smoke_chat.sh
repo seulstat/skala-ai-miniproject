@@ -31,7 +31,7 @@ json.dump([json.loads(e) for e in ev[:-1]], open(sys.argv[2],"w"))' "$TMP/stream
 }
 
 if [ "$MODE" = ollama ]; then
-  export FAST_MODEL=${FAST_MODEL:-ollama:qwen3:0.6b} QUALITY_MODEL=${QUALITY_MODEL:-ollama:qwen3:8b}
+  export FAST_MODEL=${FAST_MODEL:-ollama:qwen3:0.6b} QUALITY_MODEL=${QUALITY_MODEL:-ollama:qwen3.5:4b}
   curl -sf --max-time 3 "${OLLAMA_BASE_URL:-http://localhost:11434}/api/tags" >"$TMP/tags.json" || { echo "ollama 서버가 없습니다 — 'ollama serve'를 먼저 실행하세요" >&2; exit 2; }
   have() { grep -Eq "\"name\":\"${1#ollama:}(:latest)?\"" "$TMP/tags.json"; }
   for m in "$FAST_MODEL" "$QUALITY_MODEL"; do

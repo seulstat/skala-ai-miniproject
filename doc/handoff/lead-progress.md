@@ -135,6 +135,12 @@
 - **CP2 위험**: A3 측정 qwen3:8b Coach 구조화 출력 성공률 1/6 → "ollama 승인 → 저장" 기준 미달 가능. 대응 후보: (a) CP2 정상 경로는 OpenAI(gpt-4o-mini)로 확인하고 ollama는 오류 경로·실패율 측정(한계 3)으로, (b) QUALITY_MODEL 조정(qwen3.5:4b 등)·프롬프트 조정
 - A3 메모: api worktree에서 `.env.example`이 작업 트리에서만 삭제돼 있었음(복원함, 원인 불명 — 다른 세션의 stash/checkout 의심, 재발 시 확인)
 
+## CP2 (2026-10-21 13:30~13:50)
+- `.env.example`이 64ca3bb에서 삭제 커밋됨(사용자가 .env로 이름 변경 → Lead `git add -A`) → 복원 `4b0a5a6`. 원격(4383825)에는 영향 없음. **교훈: main에서 `git add -A` 전에 `git status` 확인**
+- feat/api 병합 `3baf454`. 통합 수정: router·coach 빈 구조화 출력 → LLM_OUTPUT_INVALID(0018), router가 새 턴 필드 초기화(0017 1번 보강), A1 테스트 기대값 None 허용. ADR 0016(색인만)·0017·0018 Accepted
+- 스모크: fake OK / ollama qwen3:8b 0/3(LLM_OUTPUT_INVALID) / **ollama qwen3.5:4b OK(첫 시도, 승인 → 저장)** → ADR-0019로 기본값 변경
+- 테스트 8·9·11·재시작 후 pending 복원은 A3 테스트(132 passed)로 확인
+
 ## 재개 순서 (14:00 이후)
 1. 사용률 확인
 2. ADR-0017·0018 판정 → 필요한 A1 수정 지시(라우터 None 처리, 새 턴 초기화) 또는 수용

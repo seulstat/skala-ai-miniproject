@@ -83,7 +83,7 @@ bash sh/seed_sample.sh           # examples/sample_user → COACH_DATA_DIR (시�
 | 변수 | 용도 | 예 |
 |---|---|---|
 | `FAST_MODEL` | router (빠른 모델) | `ollama:qwen3:0.6b`, `openai:gpt-4o-mini`, `fake` |
-| `QUALITY_MODEL` | Coach·Reviewer | `ollama:qwen3:8b`, `openai:gpt-4o-mini`, `fake` |
+| `QUALITY_MODEL` | Coach·Reviewer | `ollama:qwen3.5:4b`, `openai:gpt-4o-mini`, `fake` |
 | `EMBEDDING_MODEL` | RAG 임베딩 (MCP 서버) | `ollama:nomic-embed-text`, `fake` |
 | `COACH_DATA_DIR` | 사용자 데이터 폴더 | `./data` |
 | `LANGSMITH_*` | trace | `.env.example` 참고 |
