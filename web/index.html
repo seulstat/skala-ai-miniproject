@@ -1,1 +1,49 @@
-<!-- [skeleton · 담당 A4] 탭 3개 화면 (design §4). Vue 3 CDN 버전 고정. 참고: ref/base/web_chat.html -->
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Interview Coach</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div id="app" v-cloak>
+  <header class="top">
+    <h1>Interview Coach <small>영어 면접 표현·답변 코치</small></h1>
+    <span v-if="store.mock" class="pill mock" title="web_server.py가 MOCK=1로 실행 중 — contracts/fixtures 응답">MOCK</span>
+    <nav class="tabs" role="tablist">
+      <button v-for="t in tabs" :key="t.id" role="tab" :class="{ active: store.tab === t.id }"
+              :aria-selected="store.tab === t.id" @click="store.tab = t.id">
+        {{ t.label }}<span v-if="t.id === 'prepare' && readyClass" class="dot" :class="readyClass" :title="readyClass === 'ok' ? '준비 완료' : '준비 필요'"></span>
+      </button>
+    </nav>
+  </header>
+  <main>
+    <prepare-tab v-show="store.tab === 'prepare'"></prepare-tab>
+    <coach-tab v-show="store.tab === 'coach'"></coach-tab>
+    <cards-tab v-show="store.tab === 'cards'"></cards-tab>
+  </main>
+</div>
+
+<!-- Vue 3.5.13 고정 (SRI). 번들러 없이 글로벌 빌드 + 컴포넌트 파일을 순서대로 불러온다 -->
+<script src="https://unpkg.com/vue@3.5.13/dist/vue.global.prod.js"
+        integrity="sha384-W/1Fp/LgAYO/oTn9Gs+PbeWuMuq1eQCnUMPCeg8POmMYchhzxctjEqtbiCIxDOON" crossorigin="anonymous"></script>
+<script src="/api.js"></script>
+<script src="/store.js"></script>
+<script src="/coach.js"></script>
+<script src="/components/ErrorBox.js"></script>
+<script src="/components/ExpressionCard.js"></script>
+<script src="/components/Timeline.js"></script>
+<script src="/components/TurnView.js"></script>
+<script src="/components/CoachTab.js"></script>
+<script src="/components/ReadinessList.js"></script>
+<script src="/components/ProfileForm.js"></script>
+<script src="/components/DocManager.js"></script>
+<script src="/components/PostingEditor.js"></script>
+<script src="/components/PrepareTab.js"></script>
+<script src="/components/Quiz.js"></script>
+<script src="/components/CardsTab.js"></script>
+<script src="/app.js"></script>
+</body>
+</html>
