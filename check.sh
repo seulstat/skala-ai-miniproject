@@ -68,7 +68,7 @@ allowed_for() {   # 역할별 허용 경로 정규식 (agent.md §2)
     core) echo "^agent/|^tests/test_core_[^/]*\\.py$|$common" ;;
     mcp)  echo "^mcp_server\\.py$|^rag\\.py$|^agent/mcp_client\\.py$|^templates/|^tests/test_mcp_[^/]*\\.py$|$common" ;;
     api)  echo "^server\\.py$|^routers/|^services/|^tests/test_api_[^/]*\\.py$|^sh/smoke_[^/]*\\.sh$|$common" ;;
-    web)  echo "^web/|^web_server\\.py$|$common" ;;
+    web)  echo "^web/|^web_server\\.py$|^tests/test_web_[^/]*\\.py$|$common" ;;
   esac
 }
 if [ "$ROLE" = lead ]; then pass "main(Lead) — 검사 생략 (병합 지점)"

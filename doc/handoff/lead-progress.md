@@ -16,6 +16,7 @@
 | 10/21 A1 2차 검증 후 | A1 구현·재작업 + Lead 검증 | 19% | 새 창 기준 누적. A1 세션(Sonnet) 사용량 포함 |
 | 10/21 A1 최종 수정 후 | A1 3차 수정 + CP1 1단계 병합 | 22% | |
 | 10/21 A2 완료 후 | A2 구현(세션 다운·재개 포함) + A4 진행 중 | 47% | 세션 2개 병행으로 증가폭 큼 |
+| 10/21 10:28 | A4 완료, CP1 리뷰 게이트 | 51% | 창 재설정 14:00 (사용자 확인) |
 
 ## 마일스톤 상태
 
@@ -117,9 +118,15 @@
 - A3 착수 프롬프트 작성 (kickoff-prompts.md)
 - 남은 A2 요청: 실제 임베딩(nomic-embed-text) 검색 스모크는 CP2에서
 
+## A4 검증 (2026-10-21, feat/web `6f7aff1`)
+- check.sh FAIL 0 · WARN 1(ADR-0016 색인 미등록), MOCK 화면 캡처 10장, 계약 미변경
+- ADR-0016 4건 수용 → main 계약 반영: api.py 성공 응답 본문·프로필 404 명시, `BACKEND_UNAVAILABLE` 오류 코드 추가, sse fixture의 `FinalAnswer.error` 잔재 제거. A4 테스트 경로 `tests/test_web_*.py` 허용(check.sh·agent.md)
+- feat/web 병합은 CP3(병합 순서 core→mcp→api→web). CP3 때 A4 후속: 프록시 연결 불가를 `BACKEND_UNAVAILABLE`로 전환, 0016 Accepted·색인
+- 리뷰 게이트 1차 답변: 1번 부분(비치명 검색 실패 흐름 보충 설명), 2번 설명 제공, 3번 통과 → 사용자 확인 대기
+
 ## 남은 항목
-- CP1 사용자 리뷰 게이트 → push → A3 착수
-- A4 진행 중 (독립)
+- CP1 승인 → push → A3 착수
+- CP3 때 feat/web 병합 + A4 후속
 
 ## 다음 시작점
 - CP0 승인·push 완료(2026-10-20, `0b29d58`). Day2 오전 각 worktree에서 kickoff-prompts.md로 A1·A2·A4 착수. 일정 압축 조정안은 [next-steps.md](next-steps.md) — 확정 시 ADR-0010·work-plan §7 갱신

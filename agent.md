@@ -36,7 +36,7 @@
 | **A1** 에이전트 코어 | `agent/`(단 `agent/mcp_client.py` 제외), `tests/test_core_*.py` | `feat/core` · `.worktrees/core` |
 | **A2** MCP·RAG | `mcp_server.py`, `rag.py`, `agent/mcp_client.py`, `templates/`, `tests/test_mcp_*.py` | `feat/mcp` · `.worktrees/mcp` |
 | **A3** API | `server.py`, `routers/`, `services/`, `tests/test_api_*.py`, `sh/smoke_*.sh` | `feat/api` · `.worktrees/api` |
-| **A4** 프론트 | `web/`, `web_server.py` | `feat/web` · `.worktrees/web` |
+| **A4** 프론트 | `web/`, `web_server.py`, `tests/test_web_*.py` | `feat/web` · `.worktrees/web` |
 
 - 모든 역할은 `doc/adr/NNNN-*.md` **새 파일**(Proposed)과 `doc/handoff/<role>.md`를 추가할 수 있다. 기존 ADR 수정·확정·색인 갱신은 Lead만 한다.
 - `check.sh`가 브랜치 이름으로 역할을 판별해 `main` 대비 변경 경로를 검사한다. 허용 경로 밖을 고치면 실패한다.

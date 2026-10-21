@@ -22,7 +22,7 @@ ErrorCode = Literal[
     "TOOL_TIMEOUT_AFTER_RETRY", "TOOL_EXECUTION_ERROR", "MCP_UNAVAILABLE",
     "LLM_TIMEOUT", "LLM_RATE_LIMIT", "LLM_OUTPUT_INVALID", "REVIEWER_DEGRADED",
     "LLM_AUTH", "MODEL_NOT_FOUND", "NOT_READY", "INPUT_INVALID", "NO_PENDING", "NOT_FOUND",
-    "STORE_ERROR", "UNEXPECTED_ERROR", "STREAM_DISCONNECTED",
+    "STORE_ERROR", "UNEXPECTED_ERROR", "STREAM_DISCONNECTED", "BACKEND_UNAVAILABLE",
 ]
 
 # 재시도 정책 (Tool 계층, asyncio.TimeoutError만): 0.5초 → 1.5초, 최대 2회 재시도 = 3번 시도
@@ -64,6 +64,9 @@ ERROR_CATALOG: dict[str, ErrorSpec] = {
         "application", False, True, 500, "예상치 못한 오류가 발생했어요. 계속되면 trace id와 함께 알려 주세요."),
     "STREAM_DISCONNECTED": ErrorSpec(
         "presentation", True, True, None, "서버 연결이 끊겼어요. 승인 대기 중인 카드가 있는지 확인할게요."),
+    # web_server.py 프록시가 :8100에 연결하지 못할 때 (ADR-0016)
+    "BACKEND_UNAVAILABLE": ErrorSpec(
+        "presentation", True, True, 502, "서버에 연결할 수 없어요. 서버가 실행 중인지 확인한 뒤 다시 시도해 주세요."),
 }
 
 

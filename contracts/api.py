@@ -14,13 +14,13 @@ from contracts.schemas import ApprovalRequest, ReviewOutcome
 
 # (메서드, 경로). A3 라우터와 A4 api.js·MOCK 서버가 같은 경로를 쓴다
 ROUTES: dict[str, tuple[str, str]] = {
-    "get_profile": ("GET", "/api/profile"),
-    "put_profile": ("PUT", "/api/profile"),
-    "list_docs": ("GET", "/api/docs"),
-    "add_doc": ("POST", "/api/docs"),
-    "delete_doc": ("DELETE", "/api/docs/{name}"),
+    "get_profile": ("GET", "/api/profile"),        # → UserProfile, 없으면 404 NOT_FOUND (ADR-0016)
+    "put_profile": ("PUT", "/api/profile"),        # UserProfile → OkResponse
+    "list_docs": ("GET", "/api/docs"),             # → List[DocInfo]
+    "add_doc": ("POST", "/api/docs"),              # DocUpload → DocInfo
+    "delete_doc": ("DELETE", "/api/docs/{name}"),  # → OkResponse, 없으면 404 NOT_FOUND
     "normalize_posting": ("POST", "/api/posting/normalize"),
-    "save_posting": ("PUT", "/api/posting"),
+    "save_posting": ("PUT", "/api/posting"),       # PostingSaveRequest → OkResponse
     "readiness": ("GET", "/api/readiness"),
     "chat_stream": ("GET", "/chat/stream"),        # ?message=&thread_id= → SSE (contracts.events)
     "chat_resume": ("POST", "/chat/resume"),
