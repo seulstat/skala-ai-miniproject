@@ -60,7 +60,7 @@ async def proxy(request: Request):
         upstream = await client.send(
             client.build_request(request.method, target, headers=headers, content=await request.body()), stream=True)
     except httpx.TransportError:
-        info = error_info("STREAM_DISCONNECTED", f"백엔드 서버({BACKEND})에 연결할 수 없어요. server.py가 실행 중인지 확인한 뒤 다시 시도해 주세요.")
+        info = error_info("BACKEND_UNAVAILABLE", f"백엔드 서버({BACKEND})에 연결할 수 없어요. server.py가 실행 중인지 확인한 뒤 다시 시도해 주세요.")
         return JSONResponse(ErrorResponse(error=info).model_dump(mode="json"), status_code=502)
 
     content_type = upstream.headers.get("content-type", "")

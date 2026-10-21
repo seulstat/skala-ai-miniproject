@@ -1,6 +1,6 @@
 # ADR-0016: 프론트 구현 중 발견한 계약 빈틈 4건의 확정 요청
 
-- 상태: Proposed
+- 상태: Accepted (Lead, 2026-10-21 — 4건 모두 계약 반영, 프록시는 BACKEND_UNAVAILABLE로 전환)
 - 날짜: 2026-10-21
 - 작성: web
 - 관련: design.md §5, contracts/api.py·errors.py·fixtures, ADR-0006·0012. 번호는 CP 병합 때 Lead가 다시 매긴다
