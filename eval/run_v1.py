@@ -33,7 +33,10 @@ def main(cases_file: str, rep: str) -> None:
     applicant = applicant_text(user_dir)
     graph = build_graph()
     tomorrow = (date.today() + timedelta(days=1)).isoformat()   # 복습 케이스: 이번 실행에서 저장한 카드가 due
-    run(graph, "그 프로젝트에서 무엇을 배웠는지 말하고 싶어요", f"v1-{rep}-warmup", approve_fn=lambda p: False)  # 예열(지표 제외)
+    try:   # 예열(지표 제외). 10/13 그래프가 여기서 실패해도 측정은 계속한다 — 실패는 각 케이스 행에 남는다
+        run(graph, "그 프로젝트에서 무엇을 배웠는지 말하고 싶어요", f"v1-{rep}-warmup", approve_fn=lambda p: False)
+    except Exception as e:
+        print(f"warmup 실패: {type(e).__name__}", flush=True)
     rows = []
     for c in load_cases(cases_file):
         row = {"id": c["id"], "input": c["input"], "expected": c["intent"]}
