@@ -27,7 +27,7 @@ from eval.common import applicant_text, judge, load_cases, save, summarize  # no
 PORT = int(os.getenv("EVAL_PORT", "8120"))
 BASE = f"http://127.0.0.1:{PORT}"
 WARMUP = "그 프로젝트에서 무엇을 배웠는지 말하고 싶어요"
-CASE_TIMEOUT = 180   # 초. v1과 같은 기준
+CASE_TIMEOUT = 120   # 초. v1과 같은 기준
 
 
 def start_server(data_dir: Path, model: str) -> subprocess.Popen:
