@@ -162,6 +162,12 @@
 - 서버 첫 요청 약 70초(색인 준비) → 예열 1회 후 측정, 콜드 스타트는 한계로 기록
 - 진행: run_all.sh 백그라운드 실행 → 끝나면 measure_extras.py → 노트북(before_after, demo)
 
+## CP4 측정 완료 (2026-10-21 18:50, 사용률 27%→?)
+- v1·v2 3회 + 참고, extras, ollama 2모델 측정 완료. 노트북 2개 출력 포함 생성(`eval/make_notebooks.py`), README 작성, design §7·ADR-0009 결과 절 갱신
+- 측정 중 수정: ADR-0021(검색 예산 미들웨어), 측정기 다수(프로세스 단위 타임아웃, .env 로드, 단일 이벤트 루프 채점), build_deps 시작 실패 시 MCP 정리, 지연 지표는 성공 카드만
+- 알려진 flaky: `tests/test_mcp_errors.py::test_caller_retry_policy_sees_the_timeout`가 단독 실행·고부하에서 실패(파일 전체·정상 부하에서는 통과)
+- 남음: 사용자 OpenAI 브라우저 E2E + README 캡처 3장(doc/images/e2e-{1-express,2-answer,3-review}.png), CP4 게이트·push, PPT 구성안
+
 ## 재개 순서 (14:00 이후)
 1. 사용률 확인
 2. ADR-0017·0018 판정 → 필요한 A1 수정 지시(라우터 None 처리, 새 턴 초기화) 또는 수용
