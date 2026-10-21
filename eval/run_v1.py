@@ -51,6 +51,8 @@ def run_one(cases_file: str, rep: str, case_id: str) -> None:
 
 
 def main(cases_file: str, rep: str) -> None:
+    from dotenv import load_dotenv
+    load_dotenv(Path(__file__).resolve().parents[1] / ".env")   # 심판(OpenAI) 키 — 자식은 dapdap.config가 읽는다
     user_dir = Path(os.environ["DAPDAP_USER_DIR"])
     assert PRACTICE not in user_dir.resolve().parents, "10/13 폴더(실제 개인 서류 포함)의 데이터는 쓰지 않는다"
     applicant = applicant_text(user_dir)
