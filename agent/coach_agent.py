@@ -10,14 +10,18 @@ from langgraph.graph.state import CompiledStateGraph
 
 from agent.prompts import generator_prompt
 from agent.tools import build_agent_tools
+from contracts import mcp_spec
 from contracts.deps import Deps
 from contracts.errors import ErrorInfo
 from contracts.schemas import ExpressionCard, UserProfile
 
 StreamWriter = Callable[[dict], None]
 
-# 한 번 생성에 검색 최대 4회, 넘으면 있는 근거로 답하게 한다 (ref 10/13과 동일)
-TOOL_CALL_RUN_LIMIT = 4
+# 한 번 생성에 검색 최대 4회(Tool별 상한의 합), 넘으면 있는 근거로 답하게 한다.
+# Tool 이름 없이 상한을 걸면 카드 출력(ToolStrategy의 ExpressionCard 호출)까지 막혀 무한 반복한다 (CP4 측정 중 발견, ADR-0021)
+TOOL_CALL_LIMITS = {mcp_spec.AGENT_TOOL_SEARCH_MY_EXPERIENCE: 2, mcp_spec.AGENT_TOOL_GET_JOB_POSTING: 1,
+                    mcp_spec.AGENT_TOOL_SEARCH_EXPRESSION_BANK: 1}
+TOOL_CALL_RUN_LIMIT = sum(TOOL_CALL_LIMITS.values())
 
 
 def build_coach_agent(
@@ -31,5 +35,6 @@ def build_coach_agent(
         tools=tools,
         system_prompt=generator_prompt(profile, known_chunks, mode),
         response_format=ToolStrategy(ExpressionCard, handle_errors=True),
-        middleware=[ToolCallLimitMiddleware(run_limit=TOOL_CALL_RUN_LIMIT, exit_behavior="continue")],
+        middleware=[ToolCallLimitMiddleware(tool_name=name, run_limit=n, exit_behavior="continue")
+                    for name, n in TOOL_CALL_LIMITS.items()],
     )

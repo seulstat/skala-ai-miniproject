@@ -1,0 +1,12 @@
+[
+  {"id": "S01", "intent": "express", "input": "고객 이탈을 미리 예측하는 모델을 만들었어요"},
+  {"id": "S02", "intent": "express", "input": "처음엔 정확도만 봤는데 쿠폰 비용까지 함께 보도록 평가 기준을 바꿨어요"},
+  {"id": "S03", "intent": "express", "input": "배송 지연의 61%가 특정 택배사의 집하 구간에 몰려 있다는 걸 찾았어요"},
+  {"id": "S04", "intent": "express", "input": "두 달 사이 변화라 계절 요인은 완전히 배제하지 못했다고 솔직하게 말하고 싶어요"},
+  {"id": "S05", "intent": "express", "input": "분석 결과를 운영 팀장님이 매주 볼 수 있게 대시보드로 만들어 드렸어요"},
+  {"id": "S06", "intent": "answer", "input": "Could you briefly introduce yourself?"},
+  {"id": "S07", "intent": "answer", "input": "면접 질문: 분석 결과가 현업의 예상과 다를 때 어떻게 설득하겠습니까?"},
+  {"id": "S08", "intent": "review", "input": "오늘 복습할 카드 보여줘"},
+  {"id": "S09", "intent": "out_of_scope", "input": "오늘 점심 메뉴 추천해줘"},
+  {"id": "S10", "intent": "out_of_scope", "input": "파이썬으로 YOLO 학습 코드 짜줘"}
+]

@@ -25,3 +25,8 @@ v1 = 10/13 CLI(`eval/v1/run_eval.py`를 원본 폴더에서 실행), v2 = 신규
 - 부정(트레이드오프): 10건이라 통계적 유의성이 약하다. 1건 지연은 MCP·검수 분리로 늘 수 있다(한계로 보고).
 - 후속 조치: Day3 오전 Lead가 `eval/run_eval.py`(v2)·`before_after.ipynb`를 작성하고 결과 절을 갱신한다. 강의자료 p.20(LangSmith + 혼합 Evaluator)에 맞춰 규칙 기반 지표(라우팅 정확도·구조화 출력 성공률·금지 표현)와 LLM-judge 점수를 함께 쓰고, 실행에 LangSmith 태그(`v1`/`v2`)를 붙여 trace와 연결한다. LangSmith Dataset 업로드는 P1.
 - 검증 방법: 노트북 출력 포함 저장, design §7 표에 가설 vs 실측 기록.
+
+## 변경 (2026-10-21, 사용자 결정 — CP4 준비)
+- **테스트셋**: 기존 10건(`eval/v1/test_cases.json`)은 실제 사용자 경력을 전제로 한 문장이라, 개인정보 원칙상 쓸 수 있는 `examples/sample_user`와 맞지 않는다. 구성 비율(express 5·answer 2·review 1·out_of_scope 2)을 유지한 sample_user 기준 10건(`eval/test_cases_sample.json`)으로 v1·v2를 모두 측정한다. 기존 10건은 참고 지표로 1회만 돌린다.
+- **실행기**: 원본 run_eval.py는 결과를 실제 개인 서류 폴더에 쓰고 그 폴더 구조를 전제해서, 지표 정의를 `eval/common.py`로 같게 두고 `eval/run_v1.py`(10/13 그래프 원본 호출)·`eval/run_v2.py`(HTTP API)로 측정한다.
+- **조건**: v1·v2 모두 생성·라우팅 `openai:gpt-4o-mini`, 임베딩 `openai:text-embedding-3-small`, 심판 gpt-4o-mini, 측정 전 예열 1회(첫 요청 색인 시간 제외), 3회 반복.
