@@ -3,7 +3,7 @@
 target-version = "py311"
 line-length = 120
 # ref/·eval/v1/은 원본 그대로 보존하는 참고용 복사본이라 lint 대상에서 뺀다
-extend-exclude = ["ref", "eval/v1", ".worktrees"]
+extend-exclude = ["ref", "eval/v1", ".worktrees", "*.ipynb"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "ASYNC"]
