@@ -27,6 +27,7 @@ from eval.common import applicant_text, judge, load_cases, save, summarize  # no
 PORT = int(os.getenv("EVAL_PORT", "8120"))
 BASE = f"http://127.0.0.1:{PORT}"
 WARMUP = "그 프로젝트에서 무엇을 배웠는지 말하고 싶어요"
+CASE_TIMEOUT = 180   # 초. v1과 같은 기준
 
 
 def start_server(data_dir: Path, model: str) -> subprocess.Popen:
@@ -85,9 +86,13 @@ async def main(cases_file: str, rep: str, model: str) -> None:
     rows = []
     try:
         async with httpx.AsyncClient(timeout=600) as client:
-            await stream(client, WARMUP, f"v2-{rep}-warmup")   # 첫 요청의 색인 준비 시간은 지표에서 뺀다 (v1과 동일)
+            await asyncio.wait_for(stream(client, WARMUP, f"v2-{rep}-warmup"), CASE_TIMEOUT)   # 첫 요청의 색인 준비 시간은 지표에서 뺀다 (v1과 동일)
             for c in load_cases(cases_file):
-                row = await run_case(client, c, f"v2-{rep}-{c['id']}")
+                try:
+                    row = await asyncio.wait_for(run_case(client, c, f"v2-{rep}-{c['id']}"), CASE_TIMEOUT)
+                except asyncio.TimeoutError:
+                    row = {"id": c["id"], "input": c["input"], "expected": c["intent"], "error": "TIMEOUT",
+                           "seconds": CASE_TIMEOUT}
                 if row.get("card"):
                     row["judge"] = await judge(row["card"], applicant)
                 print(f"{c['id']} {row.get('intent')} {row['seconds']}s err={row.get('error', '')}", flush=True)
