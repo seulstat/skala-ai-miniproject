@@ -60,7 +60,7 @@ def build_agent_tools(
         """
         return await _call_with_retry(
             writer, notices, used, mcp_spec.AGENT_TOOL_SEARCH_MY_EXPERIENCE, query,
-            deps.mcp.call_tool, mcp_spec.TOOL_SEARCH_MY_EXPERIENCE, {"query": query, "k": k},
+            deps.mcp.call_tool, mcp_spec.TOOL_SEARCH_MY_EXPERIENCE, {"query": query, "k": max(1, min(k, 5))},  # SearchArgs 범위(1~5)로 보정 (10/13과 동일)
         )
 
     @tool
@@ -87,7 +87,7 @@ def build_agent_tools(
         """
         return await _call_with_retry(
             writer, notices, used, mcp_spec.AGENT_TOOL_SEARCH_EXPRESSION_BANK, query,
-            deps.mcp.call_tool, mcp_spec.TOOL_SEARCH_EXPRESSION_BANK, {"query": query, "k": k},
+            deps.mcp.call_tool, mcp_spec.TOOL_SEARCH_EXPRESSION_BANK, {"query": query, "k": max(1, min(k, 5))},  # SearchArgs 범위(1~5)로 보정 (10/13과 동일)
         )
 
     return [search_my_experience, get_job_posting, search_expression_bank]

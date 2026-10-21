@@ -32,7 +32,7 @@
 
 | 역할 | 수정 가능 | 브랜치 / worktree |
 |---|---|---|
-| **Lead** | `contracts/`, `agent.md`, `check.sh`, `requirements.txt`, `pyproject.toml`, `.env.example`, `.gitignore`, `sh/`(단 `sh/smoke_*.sh` 제외), `ref/`, `examples/`, `tests/conftest.py`, `tests/test_contracts.py`, `doc/` 전체, `eval/`, `README.md` | `main` |
+| **Lead** | `contracts/`, `agent.md`, `check.sh`, `requirements.txt`, `pyproject.toml`, `.env.example`, `.gitignore`, `sh/`(단 `sh/smoke_*.sh` 제외), `ref/`, `examples/`, `tests/conftest.py`, `tests/test_contracts.py`, `tests/test_integration_*.py`, `doc/` 전체, `eval/`, `README.md` | `main` |
 | **A1** 에이전트 코어 | `agent/`(단 `agent/mcp_client.py` 제외), `tests/test_core_*.py` | `feat/core` · `.worktrees/core` |
 | **A2** MCP·RAG | `mcp_server.py`, `rag.py`, `agent/mcp_client.py`, `templates/`, `tests/test_mcp_*.py` | `feat/mcp` · `.worktrees/mcp` |
 | **A3** API | `server.py`, `routers/`, `services/`, `tests/test_api_*.py`, `sh/smoke_*.sh` | `feat/api` · `.worktrees/api` |

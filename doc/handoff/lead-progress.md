@@ -15,6 +15,7 @@
 | 19:50 이후 | 5시간 창 재설정 | 0% | 새 창 기준선. 병렬 단계 예산은 이 값부터 계산 |
 | 10/21 A1 2차 검증 후 | A1 구현·재작업 + Lead 검증 | 19% | 새 창 기준 누적. A1 세션(Sonnet) 사용량 포함 |
 | 10/21 A1 최종 수정 후 | A1 3차 수정 + CP1 1단계 병합 | 22% | |
+| 10/21 A2 완료 후 | A2 구현(세션 다운·재개 포함) + A4 진행 중 | 47% | 세션 2개 병행으로 증가폭 큼 |
 
 ## 마일스톤 상태
 
@@ -109,9 +110,16 @@
 - ADR 0013·0014 Accepted, 0015 Rejected(Lead 판정 절 추가), 색인 등록
 - A2 지시서에 `_build_mcp` 호출 형태 호환 조건 추가
 
+## CP1 2단계 (2026-10-21)
+- A2 검증: feat/mcp check.sh FAIL 0 · WARN 0, mcp 테스트 52(+core 20), 계약 미변경, Proposed ADR 없음. Lock 제거(동시 호출 허용)·ToolError(tool_name) 인자 판단 수용
+- feat/mcp → main 병합(`a4fa27e`). `tests/test_integration_cp1.py`(Lead): 실제 MCP 서버 subprocess + fake LLM 그래프 E2E 통과 — Tool·Resource·Prompt 응답 형식, 이벤트 순서, 승인 대기, resume → 저장
+- 통합 수정(Lead): agent/tools.py `k`를 1~5로 보정(A2 요청 2, 10/13과 동일), pyproject의 rag.py E702 예외 제거(A2 요청 1), Lead 소유 경로에 `tests/test_integration_*.py` 추가
+- A3 착수 프롬프트 작성 (kickoff-prompts.md)
+- 남은 A2 요청: 실제 임베딩(nomic-embed-text) 검색 스모크는 CP2에서
+
 ## 남은 항목
-- A2 착수·완료 → CP1 2단계(feat/mcp 병합, 실제 MCP + fake LLM 그래프 E2E, 사용자 리뷰 게이트, push) → A3 착수
-- A4 착수 (독립)
+- CP1 사용자 리뷰 게이트 → push → A3 착수
+- A4 진행 중 (독립)
 
 ## 다음 시작점
 - CP0 승인·push 완료(2026-10-20, `0b29d58`). Day2 오전 각 worktree에서 kickoff-prompts.md로 A1·A2·A4 착수. 일정 압축 조정안은 [next-steps.md](next-steps.md) — 확정 시 ADR-0010·work-plan §7 갱신

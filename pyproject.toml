@@ -10,9 +10,6 @@ select = ["E", "F", "W", "I", "ASYNC"]
 # 한국어 프롬프트 문자열이 길어 줄 길이는 검사하지 않는다 (파일 길이는 check.sh가 경고)
 ignore = ["E501"]
 
-[tool.ruff.lint.per-file-ignores]
-# 10/13 원본 복사본의 한 줄 다중 문장. A2가 정리할 때 제거
-"rag.py" = ["E702"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

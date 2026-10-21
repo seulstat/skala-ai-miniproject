@@ -122,3 +122,43 @@ web/, web_server.py, doc/handoff/web.md, doc/adr/NNNN-*.md(새 Proposed만)
 
 [보고] 끝나면 check.sh 출력 원문, 확인한 화면 목록, 인수인계 노트 경로, Lead 요청 사항을 보고하고 멈춘다.
 ```
+
+---
+
+## A3 API — `.worktrees/api` (브랜치 `feat/api`) · CP1 통과 후 착수
+
+```text
+너는 Interview Coach Agent 프로젝트의 A3(API) agent다. 작업 폴더는 .worktrees/api, 브랜치는 feat/api다. A1(그래프)·A2(MCP)는 main에 병합돼 있다.
+
+[먼저 읽을 것 — 이 순서로, 읽기 전에는 아무것도 만들지 않는다]
+1. agent.md
+2. doc/design.md §2·§4·§5·§6
+3. doc/work-plan.md §5 "A3 API"
+4. doc/adr/README.md → 0005·0006·0007·0011·0012·0014
+5. contracts/ 전체(api.py ROUTES·ErrorResponse, events.py SSE_HEADERS·to_sse, errors.py ERROR_CATALOG), doc/handoff/core.md·mcp.md, agent/deps.py·graph.py, ref/base/server.py, ref/v1/check_inputs.py·ingest_posting.py
+6. tests/test_integration_cp1.py (실제 MCP + fake LLM으로 그래프를 돌리는 예시)
+
+[담당 경로 — 이 밖은 수정 금지]
+server.py, routers/, services/, tests/test_api_*.py, sh/smoke_*.sh, doc/handoff/api.md, doc/adr/NNNN-*.md(새 Proposed만)
+
+[할 일]
+- server.py(:8100): lifespan에서 agent.deps.build_deps()로 Deps 1회 조립·graph 1회 빌드, 종료 시 MCP stop·체크포인터 정리·LangSmith flush. MCP start와 stop은 같은 lifespan 함수 안에서(anyio cancel scope, mcp.md 요청 3). 라우터에는 Depends로 Deps·graph를 주입(전역 싱글턴 금지)
+- 오류(ADR-0012): CoachError → ErrorResponse + ERROR_CATALOG[code].http_status, RequestValidationError → 422 INPUT_INVALID, 그 외 예외 → 500 UNEXPECTED_ERROR(내부 원인은 로그에만, LOG_FIELDS 사용)
+- routers/setup.py: /api/profile(GET·PUT, UserProfile), /api/docs(GET·POST·DELETE {name}), /api/posting/normalize(→ PostingDraft, quality_llm + ingest 프롬프트), PUT /api/posting, /api/readiness(→ ReadinessResponse). 파일은 deps.paths만 사용
+- services/readiness.py(ref/v1/check_inputs.py 이식), services/posting.py(ref/v1/ingest_posting.py 프롬프트 이식)
+- routers/chat.py: GET /chat/stream?message&thread_id → 먼저 readiness로 NOT_READY 검사(실패 시 ErrorRaised → [DONE]) → graph.astream(stream_mode="custom")을 to_sse로 → [DONE]. 응답 헤더 SSE_HEADERS. CoachError는 ErrorRaised, 그 외 예외는 UNEXPECTED_ERROR ErrorRaised. POST /chat/resume(승인 대기 없으면 409 NO_PENDING) → ResumeResponse. GET /chat/pending → PendingResponse(aget_state().interrupts)
+- routers/cards.py: GET /api/cards, GET /api/cards/due, POST /api/cards/{card_id}/review(P1, 없는 id는 404 NOT_FOUND)
+- sh/smoke_chat.sh: curl -N으로 stream → pending → resume. FAST/QUALITY_MODEL=fake면 fake 모델이 빈 응답을 내므로 ErrorRaised(LLM_OUTPUT_INVALID) 경로와 REST 엔드포인트를 확인하고, ollama 설정에서 승인 → 저장까지 정상 경로를 확인한다
+
+[완료 기준]
+- design §6 테스트 8·9·11을 tests/test_api_*.py로 작성해 통과 (httpx AsyncClient + ASGITransport, Deps는 fake LLM·fake MCP로 주입, 네트워크 없음, tmp_path)
+- 서버를 재시작해도 /chat/pending이 승인 대기를 돌려주는지 테스트(같은 checkpoints.db로 앱을 두 번 띄움)
+- bash check.sh FAIL 0, doc/handoff/api.md 작성 (실행 명령·curl 예시 포함)
+
+[금지]
+- agent/·mcp_server.py·contracts/ 수정 (그래프 동작을 바꿔야 하면 Lead에 요청 + Proposed ADR), 동기 invoke, 전역 싱글턴, requirements.txt 수정
+- git push, main 커밋, 커밋 메시지에 Claude·AI 이름
+- 커밋 형식: [api] 요약 (ADR-NNNN)
+
+[보고] 끝나면 check.sh 출력 원문, 테스트 결과, 인수인계 노트 경로, Lead 요청 사항을 보고하고 멈춘다.
+```
