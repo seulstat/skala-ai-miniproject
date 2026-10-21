@@ -6,13 +6,17 @@ agent/ 전체(에이전트 코어)를 fake 모델·fake MCP·네트워크 없이
 
 1차 제출 후 Lead 리뷰 반영: `git merge main`(check.sh ⑥ 버그 수정 반영), Reviewer가 `deps.mcp.get_prompt`로
 검수 규칙을 받도록 수정(ADR-0015 반려 반영), `agent/graph.py`를 200줄 이하로 분리.
+2차 리뷰 반영: `get_prompt`가 돌려주는 값은 이미 렌더링된 system 프롬프트라, Reviewer가 `reviewer_prompt()`로
+다시 감싸지 않고 그대로 system 메시지로 쓰도록 수정 (이중 지시문 방지).
 
 - `agent/llm.py`: `FAST_MODEL`·`QUALITY_MODEL` → `init_chat_model`, `"fake"`면 `ToolCallingFakeChatModel`. LLM 예외 분류 함수
 - `agent/deps.py`: `build_deps()` — Deps 조립 (단, MCP 연결은 A2 작업이 끝나야 실제로 동작, 아래 "요청" 참고)
 - `agent/tools.py`: MCP 래퍼 `@tool` 3개. `with_retry` + `ToolError` 격리, `EvidenceSearched` 이벤트
 - `agent/coach_agent.py`: Coach 서브그래프 (`create_agent` ReAct + `ToolStrategy(ExpressionCard)` + `ToolCallLimitMiddleware`)
-- `agent/reviewer_agent.py`: Reviewer 서브그래프. `deps.mcp.get_prompt(PROMPT_PERSONA_REVIEW, {})`로 검수 규칙을
-  받아 LLM 검수 + `banned_hits` 확정 검사 (ADR-0004). `get_prompt`의 `asyncio.TimeoutError`는 `with_retry`로
+- `agent/reviewer_agent.py`: Reviewer 서브그래프. `deps.mcp.get_prompt(PROMPT_PERSONA_REVIEW, {})`가 돌려주는
+  값은 **이미 렌더링된 system 프롬프트**이므로 그대로 `("system", system_prompt)`로 써서 LLM 검수 +
+  `banned_hits` 확정 검사를 한다 (ADR-0004). `agent/prompts.py::reviewer_prompt()`로 다시 감싸지 않는다 —
+  감싸면 MCP 서버가 이미 넣은 지시문이 이중으로 들어간다. `get_prompt`의 `asyncio.TimeoutError`는 `with_retry`로
   재시도, 재시도 소진·치명 아닌 `ToolError`는 `REVIEWER_DEGRADED`로 강등(규칙 검사만), 치명(`MCP_UNAVAILABLE`)은
   그대로 전파한다. `deps.paths` 폴백은 없다.
 - `agent/graph.py`: Supervisor 메인 그래프 (router → coach → reviewer ⟲2 → approve(interrupt) → save/rejected, review_cards, out_of_scope)
@@ -20,7 +24,8 @@ agent/ 전체(에이전트 코어)를 fake 모델·fake MCP·네트워크 없이
   `graph.py`를 200줄 이하로 두려고 분리했다
 - `agent/store.py`: `SQLiteCardStore` (coach.db, aiosqlite, 단계 0·1·2 = D+1·D+3·D+7)
 - `agent/prompts.py`: 깨져 있던 `.config` import를 제거하고 `reviewer_prompt(persona_rules: str)`로 시그니처
-  변경(파라미터화) — `persona_rules`는 이제 MCP가 렌더링해 돌려준 텍스트다
+  변경(파라미터화). 이 함수는 더 이상 `agent/reviewer_agent.py`가 부르지 않고 A2의 `mcp_server.py`가
+  `persona_review_prompt` Prompt를 렌더링할 때 서버 쪽에서 쓴다 (Lead 2차 리뷰 반영)
 
 ## 파일·함수 위치
 | 파일 | 함수/클래스 | 역할 |
@@ -79,7 +84,8 @@ bash check.sh
   A2가 작업을 마치기 전까지 `build_deps()`로 실제 MCP에 붙는 경로는 동작하지 않는다 — 의도된 상태다(설계상 CP1에
   A2 작업과 함께 맞춘다). 테스트는 전부 `Deps`를 직접 만들어 fake MCP로 돌렸다. `agent/reviewer_agent.py`가
   이제 `deps.mcp.get_prompt`를 실제로 호출하므로, A2의 `mcp_server.py`가 `persona_review_prompt`를
-  `agent/prompts.py::reviewer_prompt`가 기대하는 것과 같은 평문(페르소나 규칙 본문)으로 렌더링해야 한다.
+  **완성된 system 프롬프트**(이미 `reviewer_prompt(rules)`로 렌더링된 텍스트)로 돌려줘야 한다 — Agent는
+  받은 문자열을 그대로 쓰고 추가로 감싸지 않는다.
 - `/chat/pending` 복원(테스트 6)·interrupt·resume은 `AsyncSqliteSaver`로 실제 파일 기반 재현까지 확인했지만,
   실제 서버 프로세스 재시작 시나리오(A3 `/chat/pending` 엔드포인트)는 통합 전이라 그 경로 자체는 아직 없다.
 
@@ -87,8 +93,9 @@ bash check.sh
 1. **A2에게 전달**: `agent/mcp_client.py`가 `contracts.deps.MCPPort`와 맞으려면 (a) 서버 1개("coach")만
    쓰도록 단순화, (b) `call_tool`/`read_resource`/`get_prompt`가 `server` 인자 없이(또는 기본값으로) 동작,
    (c) `call_tool`이 `json.loads` 없이 MCP 결과 텍스트(`[출처 라벨]...`)를 그대로 돌려줘야 합니다.
-   (d) `get_prompt(PROMPT_PERSONA_REVIEW, {})`가 `agent/prompts.py::reviewer_prompt(persona_rules)`에 바로
-   넣을 수 있는 페르소나 규칙 평문을 돌려줘야 합니다(현재 Reviewer가 실제로 이 경로를 쓴다).
+   (d) `mcp_server.py`의 `persona_review_prompt`는 `agent/prompts.py::reviewer_prompt(rules)`로 **서버 쪽에서**
+   완성된 system 프롬프트를 렌더링해 돌려줘야 합니다 — Reviewer(Agent)는 `get_prompt`가 돌려준 문자열을
+   그대로 system 메시지로 쓰고 다시 감싸지 않습니다.
 2. CP1에서 실제 MCP 서버가 붙으면 `tests/test_core_reviewer.py`의 fake `get_prompt` 응답 형식이 A2의 실제
    렌더링 결과와 맞는지 한 번 더 확인해 주세요.
 

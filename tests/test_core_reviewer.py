@@ -113,8 +113,8 @@ async def test_reviewer_fetches_persona_review_prompt_and_uses_it_as_system_mess
     final, _ = await _run_reviewer(deps, card)
 
     assert mcp.get_prompt_calls == [(mcp_spec.PROMPT_PERSONA_REVIEW, {})]
-    assert quality_llm.received_system is not None
-    assert "페르소나 규칙 본문" in quality_llm.received_system
+    # get_prompt는 이미 렌더링된 system 프롬프트를 돌려준다 — Reviewer는 다시 감싸지 않고 그대로 써야 한다
+    assert quality_llm.received_system == mcp.prompt_text
     assert final["review"]["passed"] is True
 
 
