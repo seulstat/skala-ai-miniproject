@@ -39,7 +39,11 @@ async def build_deps() -> Deps:
     fast_llm = llm_module.make_llm(os.getenv("FAST_MODEL", "fake"))
     quality_llm = llm_module.make_llm(os.getenv("QUALITY_MODEL", "fake"))
     mcp = await _build_mcp(paths)
-    store = SQLiteCardStore(paths.coach_db)
-    checkpointer = await _build_checkpointer(paths)
+    try:
+        store = SQLiteCardStore(paths.coach_db)
+        checkpointer = await _build_checkpointer(paths)
+    except BaseException:
+        await mcp.stop()   # 뒤 단계가 실패하면 이미 띄운 MCP 서버를 정리한다 (안 하면 서버 프로세스가 남는다)
+        raise
     return Deps(fast_llm=fast_llm, quality_llm=quality_llm, mcp=mcp, store=store,
                 checkpointer=checkpointer, paths=paths)
