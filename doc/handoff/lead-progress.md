@@ -155,6 +155,13 @@
 - 사용자 브라우저 E2E에서 발견: 실제 공고 정리 실패, 검수 강등 빈발, 복습 응답 부실 → 원인 ollama thinking(빈 본문·261초) → ADR-0020(thinking 끄기, 공고 규칙 기반 대안, 강등 로그, 최근 카드 표시, 복습 권위 게이트). 재확인 통과 → 승인·push
 - 다음: (b) CP4 측정 준비 앞당김 (사용자 선택), OpenAI 키는 .env에 있음(사용자 확인)
 
+## CP4 준비 (2026-10-21 오후, 사용률 13%에서 시작)
+- 테스트셋 B안(사용자 결정): sample_user 기준 10건 `eval/test_cases_sample.json`, 기존 10건은 참고 1회 (ADR-0009 변경 절)
+- 실행기: `eval/common.py`(지표 정의), `run_v1.py`(10/13 그래프 원본 호출, 결과를 private 폴더에 쓰지 않게), `run_v2.py`(HTTP, 서버 직접 기동), `run_all.sh`(각 3회+참고), `measure_extras.py`(재시작 복원·동시 2요청·MCP 오버헤드·체크포인트 크기)
+- 측정 중 발견: Coach Tool 상한이 카드 출력까지 막아 gpt-4o-mini에서 무한 반복 → ADR-0021(Tool별 상한). v1도 gpt-4o-mini에서 OpenAI 400(tool 메시지 순서) — v1의 실제 실패로 기록
+- 서버 첫 요청 약 70초(색인 준비) → 예열 1회 후 측정, 콜드 스타트는 한계로 기록
+- 진행: run_all.sh 백그라운드 실행 → 끝나면 measure_extras.py → 노트북(before_after, demo)
+
 ## 재개 순서 (14:00 이후)
 1. 사용률 확인
 2. ADR-0017·0018 판정 → 필요한 A1 수정 지시(라우터 None 처리, 새 턴 초기화) 또는 수용
