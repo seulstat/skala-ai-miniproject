@@ -14,6 +14,7 @@ MCP_UNAVAILABLE처럼 치명(fatal)인 ToolError는 그대로 올려 그래프�
 import asyncio
 import functools
 import json
+import logging
 from typing import Optional, TypedDict
 
 from langgraph.graph import END, START, StateGraph
@@ -61,7 +62,9 @@ async def _llm_review(deps: Deps, card: dict) -> tuple[ReviewResult, Optional[di
         review = await deps.quality_llm.with_structured_output(ReviewResult).ainvoke(
             [("system", system_prompt), ("human", _card_json(card))]
         )
-    except Exception:  # LLM 호출 자체가 실패해도 규칙 검사만으로 강등해 진행한다
+    except Exception as e:  # LLM 호출 자체가 실패해도 규칙 검사만으로 강등해 진행한다
+        logging.getLogger("coach.agent").warning("node=reviewer error_code=REVIEWER_DEGRADED detail=%s: %s",
+                                                  type(e).__name__, str(e)[:200])
         return degraded, error_info("REVIEWER_DEGRADED").model_dump()
     return review, None
 

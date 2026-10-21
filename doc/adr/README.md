@@ -24,6 +24,7 @@
 | [0017](0017-api-drives-graph-turn-reset-lock-retry.md) | API가 새 턴 초기화·스레드 락·저장 재시도를 맡는다 | Accepted | 2026-10-21 | api | |
 | [0018](0018-empty-structured-output-is-llm-output-invalid.md) | 빈 구조화 출력은 LLM_OUTPUT_INVALID | Accepted | 2026-10-21 | api | |
 | [0019](0019-ollama-quality-model-qwen35-4b.md) | ollama 품질 모델을 qwen3.5:4b로 | Accepted | 2026-10-21 | Lead | |
+| [0020](0020-ollama-thinking-off-posting-rule-fallback.md) | ollama thinking 끄기, 공고 정리 규칙 기반 대안, 복습 시 최근 카드 | Accepted | 2026-10-21 | Lead | |
 
 ## design.md ↔ ADR 대응
 

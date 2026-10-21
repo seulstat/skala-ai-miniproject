@@ -155,14 +155,14 @@ async def _review_cards(state: AgentState, deps: Deps) -> AgentState:
     writer = get_stream_writer()
     today = date.fromisoformat(state["today"]) if state.get("today") else None
     cards = await deps.store.due_cards(today)
-    if not cards:
-        reply = "오늘 복습할 카드가 없습니다."
-    else:
-        lines = [f"오늘 복습할 카드 {len(cards)}장 — 한국어를 보고 영어로 먼저 말해 보세요."]
-        for c in cards:
-            answer = c.answer_draft or c.formal_expression
-            lines.append(f"\n[{c.id}] {c.korean_prompt}\n  ↳ 정답: {answer}")
-        reply = "\n".join(lines)
+    if cards:
+        head, show = f"오늘 복습할 카드 {len(cards)}장 — 한국어를 보고 영어로 먼저 말해 보세요.", cards
+    else:   # 오늘 복습할 카드가 없어도 최근 저장한 카드는 보여 준다 (CP3 사용자 피드백)
+        show = sorted(await deps.store.list_cards(), key=lambda c: c.id, reverse=True)[:5]
+        head = (f"오늘 복습할 카드는 없어요. 최근 저장한 카드 {len(show)}장을 보여 드릴게요." if show
+                else "저장된 카드가 아직 없어요. 먼저 표현을 만들어 승인해 보세요.")
+    reply = "\n".join([head] + [f"\n[{c.id}] {c.korean_prompt}\n  ↳ 정답: {c.answer_draft or c.formal_expression}"
+                                 f" (다음 복습 {c.next_review})" for c in show])
     writer(events.FinalAnswer(reply=reply).model_dump())
     return {"final_message": reply}
 

@@ -30,6 +30,9 @@ def make_llm(spec: str, *, fake_messages: Optional[Iterator[Union[AIMessage, str
     """spec이 "fake"면 ToolCallingFakeChatModel, 아니면 init_chat_model("provider:model")."""
     if spec == "fake":
         return ToolCallingFakeChatModel(messages=fake_messages or iter([AIMessage(content="")]))
+    if spec.startswith("ollama:"):
+        # qwen3 계열의 thinking 모드는 본문을 비우거나(공고 정리) 수십 배 느려진다 — CP3 실측 261초 → 10초 (ADR-0020)
+        return init_chat_model(spec, reasoning=False)
     return init_chat_model(spec)
 
 

@@ -11,6 +11,7 @@ from langchain_core.language_models import BaseChatModel
 from agent.llm import classify_llm_error
 from contracts.errors import CoachError
 from contracts.schemas import POSTING_SECTIONS, REQUIRED_POSTING_SECTIONS, PostingDraft
+from services.posting_rules import split_by_rules
 
 MAX_CHARS = 15000
 
@@ -75,9 +76,21 @@ async def normalize_posting(llm: BaseChatModel, text: str) -> PostingDraft:
         return draft_of(raw)
     try:
         reply = await llm.ainvoke(PROMPT + raw[:MAX_CHARS])
+        llm_draft = draft_of(_clean(str(reply.text)))
     except Exception as e:
-        raise classify_llm_error(e) from e
-    markdown = _clean(str(reply.text))
-    if not markdown:
-        raise CoachError("LLM_OUTPUT_INVALID", detail="공고 정리 결과가 비어 있음")
-    return draft_of(markdown)
+        llm_error = classify_llm_error(e)
+        llm_draft = None
+    else:
+        llm_error = None
+    if llm_draft and llm_draft.sections and not llm_draft.missing_required:
+        return llm_draft
+    # LLM이 비었거나 필수 섹션을 빠뜨리면 규칙 기반 분할로 대신한다 (제목 키워드 → 섹션)
+    rule_draft = draft_of(split_by_rules(raw))
+    if rule_draft.sections and (not llm_draft or len(rule_draft.missing_required) <= len(llm_draft.missing_required)):
+        return rule_draft          # 필수 섹션이 빠져 있어도 초안으로 돌려주고 화면에서 사용자가 고친다
+    if llm_draft and llm_draft.sections:
+        return llm_draft
+    if llm_error is not None:
+        raise llm_error
+    raise CoachError("LLM_OUTPUT_INVALID", detail="공고 정리 결과가 비어 있음",
+                     user_message="공고를 섹션으로 나누지 못했어요. 원문에 '주요 업무'·'자격 요건' 같은 제목을 붙여 다시 시도해 주세요.")

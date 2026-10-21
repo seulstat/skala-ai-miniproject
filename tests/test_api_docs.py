@@ -3,8 +3,7 @@
 from langchain_core.messages import AIMessage
 from test_api_support import deps_factory, error_code, running_app
 
-from contracts.api import ErrorResponse, ReadinessResponse
-from contracts.errors import ERROR_CATALOG
+from contracts.api import ReadinessResponse
 from contracts.schemas import PostingDraft
 
 POSTING_OK = "## 주요 업무\n- 데이터 분석\n\n## 자격 요건\n- SQL\n"
@@ -86,12 +85,12 @@ async def test_normalize_posting_skips_llm_when_already_formatted(data_paths):
     assert r.status_code == 200 and draft.markdown == POSTING_OK.strip() and draft.missing_required == []
 
 
-async def test_normalize_posting_empty_model_output_is_llm_output_invalid(data_paths):
+async def test_normalize_posting_empty_model_output_falls_back_to_draft(data_paths):
+    """LLM이 빈 응답이어도 오류 대신 규칙 기반 초안을 돌려주고, 빠진 필수 섹션을 알려 준다 (CP3 수정)."""
     async with running_app(deps_factory(data_paths, [], [AIMessage(content="")])) as client:
         r = await client.post("/api/posting/normalize", json={"text": "형식 없는 공고 원문"})
-    assert r.status_code == ERROR_CATALOG["LLM_OUTPUT_INVALID"].http_status
-    error = ErrorResponse.model_validate(r.json()).error
-    assert error.code == "LLM_OUTPUT_INVALID" and error.recoverable
+    assert r.status_code == 200
+    assert set(r.json()["missing_required"]) == {"주요 업무", "자격 요건"}
 
 
 async def test_save_posting_writes_job_posting_and_readiness_follows(data_paths):
