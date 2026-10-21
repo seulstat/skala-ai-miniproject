@@ -20,11 +20,11 @@ from langgraph.types import interrupt
 from agent import llm as llm_module
 from agent.coach_agent import build_coach_agent
 from agent.reviewer_agent import build_reviewer_agent
+from agent.routing import NODE_BUMP_RETRY, route_approval, route_intent, route_review
 from contracts import events, schemas
 from contracts.deps import Deps
 from contracts.errors import CoachError, ErrorInfo
 from contracts.state import (
-    INTENT_TO_NODE,
     MAX_REWRITES,
     NODE_APPROVE,
     NODE_COACH,
@@ -42,8 +42,6 @@ ROUTER_PROMPT = """당신은 영어 면접 준비 도우미의 요청 분류기�
 - answer: 면접 질문(영어 또는 한국어)을 주고 그에 대한 답변을 원하는 경우. "면접 질문:", 의문형 면접 질문.
 - review: 저장한 카드·표현을 복습/퀴즈하고 싶은 경우.
 - out_of_scope: 영어 면접 표현·답변·복습과 무관한 요청 (일상 잡담, 코드 작성 요청 등)."""
-
-_NODE_BUMP_RETRY = "bump_retry"  # 계약(contracts.state)에 없는 내부 전용 노드 — 재작성 카운터만 올린다
 
 
 async def _router(state: AgentState, deps: Deps) -> AgentState:
@@ -171,36 +169,22 @@ async def _out_of_scope(state: AgentState, deps: Deps) -> AgentState:
     return {"final_message": reply}
 
 
-def _route_intent(state: AgentState) -> str:
-    return INTENT_TO_NODE.get(state["intent"], NODE_OUT_OF_SCOPE)
-
-
-def _route_review(state: AgentState) -> str:
-    if state["review"]["passed"] or state.get("retry_count", 0) >= MAX_REWRITES:
-        return NODE_APPROVE
-    return _NODE_BUMP_RETRY
-
-
-def _route_approval(state: AgentState) -> str:
-    return NODE_SAVE if state["approved"] else NODE_REJECTED
-
-
 def build_graph(deps: Deps) -> CompiledStateGraph:
     g = StateGraph(AgentState)
     nodes = {
         NODE_ROUTER: _router, NODE_COACH: _coach, NODE_REVIEWER: _reviewer,
-        _NODE_BUMP_RETRY: _bump_retry, NODE_APPROVE: _approve, NODE_SAVE: _save,
+        NODE_BUMP_RETRY: _bump_retry, NODE_APPROVE: _approve, NODE_SAVE: _save,
         NODE_REJECTED: _rejected, NODE_REVIEW_CARDS: _review_cards, NODE_OUT_OF_SCOPE: _out_of_scope,
     }
     for name, fn in nodes.items():
         g.add_node(name, functools.partial(fn, deps=deps))
 
     g.add_edge(START, NODE_ROUTER)
-    g.add_conditional_edges(NODE_ROUTER, _route_intent, [NODE_COACH, NODE_REVIEW_CARDS, NODE_OUT_OF_SCOPE])
+    g.add_conditional_edges(NODE_ROUTER, route_intent, [NODE_COACH, NODE_REVIEW_CARDS, NODE_OUT_OF_SCOPE])
     g.add_edge(NODE_COACH, NODE_REVIEWER)
-    g.add_conditional_edges(NODE_REVIEWER, _route_review, [NODE_APPROVE, _NODE_BUMP_RETRY])
-    g.add_edge(_NODE_BUMP_RETRY, NODE_COACH)
-    g.add_conditional_edges(NODE_APPROVE, _route_approval, [NODE_SAVE, NODE_REJECTED])
+    g.add_conditional_edges(NODE_REVIEWER, route_review, [NODE_APPROVE, NODE_BUMP_RETRY])
+    g.add_edge(NODE_BUMP_RETRY, NODE_COACH)
+    g.add_conditional_edges(NODE_APPROVE, route_approval, [NODE_SAVE, NODE_REJECTED])
     for n in (NODE_SAVE, NODE_REJECTED, NODE_REVIEW_CARDS, NODE_OUT_OF_SCOPE):
         g.add_edge(n, END)
     return g.compile(checkpointer=deps.checkpointer)
