@@ -168,6 +168,12 @@
 - 알려진 flaky: `tests/test_mcp_errors.py::test_caller_retry_policy_sees_the_timeout`가 단독 실행·고부하에서 실패(파일 전체·정상 부하에서는 통과)
 - 남음: 사용자 OpenAI 브라우저 E2E + README 캡처 3장(doc/images/e2e-{1-express,2-answer,3-review}.png), CP4 게이트·push, PPT 구성안
 
+## 보류 중인 리뷰 게이트 (사용자 요청: 작업 후 마지막에 다시 질문)
+- CP4-1: v1 실패 원인과 v2가 막은 방식
+- CP4-2: v2가 느려진 이유와 트레이드오프로 보는 근거
+- CP4-3: ollama 선택지를 남긴 이유와 실측된 대가
+- 사용률: 창 재설정 0% (2026-10-21 19시경)
+
 ## 재개 순서 (14:00 이후)
 1. 사용률 확인
 2. ADR-0017·0018 판정 → 필요한 A1 수정 지시(라우터 None 처리, 새 턴 초기화) 또는 수용
