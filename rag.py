@@ -1,40 +1,48 @@
-# 출처: skala-ai-agent/practice/dapdap/rag.py (Phase 0 복사, 로직 미변경)
-"""내 서류·표현집을 벡터 검색할 수 있게 만든다.
+# 출처: skala-ai-agent/practice/dapdap/rag.py (Phase 0 복사 후 .config 의존을 DataPaths·EMBEDDING_MODEL로 교체, ADR-0003)
+"""내 서류·표현집을 벡터 검색한다. MCP 서버 프로세스 안에서만 쓴다 (ADR-0003).
 
-InMemoryVectorStore는 numpy를 요구해서, 문서 수십 개 규모에 맞춘 순수 Python 코사인 검색으로 대신한다.
+제목 단위 분할 → 임베딩 → 순수 Python 코사인 검색(문서 수십 개 규모, numpy 불필요). 검색할 때 파일 mtime이 바뀌었으면 다시 색인한다.
+EMBEDDING_MODEL=fake면 네트워크 없는 해시 임베딩을 쓴다 (테스트·MOCK 개발용).
 """
 
+import contextlib
 import json
 import math
-from functools import lru_cache
+import os
+import threading
+import zlib
+from pathlib import Path
+from typing import Callable, Optional
 
 from langchain_core.documents import Document
+from langchain_core.embeddings import Embeddings
 
-from .config import (  # TODO(A2): COACH_DATA_DIR·EMBEDDING_MODEL 기반으로 교체
-    BANK_PATH,
-    DOCS_DIR,
-    EMBED_CACHE_PATH,
-    embedding_name,
-)
+from contracts import mcp_spec
+from contracts.deps import DataPaths
 
 CHUNK_SIZE = 500
 CHUNK_OVERLAP = 50
+FAKE_DIM = 256
+NO_EXPERIENCE = "경험 문서가 비어 있습니다. get_job_posting과 search_expression_bank의 근거로 작성하세요."
+NO_BANK = "표현집이 비어 있습니다. search_my_experience와 get_job_posting의 근거로 작성하세요."
 
 
 def split_by_heading(text: str) -> list[tuple[str, str]]:
-    """'#'/'##' 제목 단위로 (제목 경로, 본문) 묶음을 만든다. 활동별 맥락이 섞이지 않게 하기 위함."""
+    """'#'/'##' 제목 단위로 (제목, 본문) 묶음을 만든다. 활동별 맥락이 섞이지 않게 하기 위함.
+    출처 라벨에 쓰는 제목은 '#' 제목(활동 이름)이고, '#'가 없는 문서만 '##' 제목을 쓴다 (계약 fixture의 라벨 형식)."""
     sections, h1, h2, buf = [], "", "", []
 
     def flush():
         if "".join(buf).strip():
-            title = " > ".join(x[:40] for x in (h1, h2) if x)
-            sections.append((title, "\n".join(buf).strip()))
+            sections.append(((h1 or h2)[:40], "\n".join(buf).strip()))
 
     for line in text.splitlines():
         if line.startswith("# "):
-            flush(); h1, h2, buf = line[2:].strip(), "", []
+            flush()
+            h1, h2, buf = line[2:].strip(), "", []
         elif line.startswith("## "):
-            flush(); h2, buf = line[3:].strip(), []
+            flush()
+            h2, buf = line[3:].strip(), []
         else:
             buf.append(line)
     flush()
@@ -59,49 +67,66 @@ def split_fixed(text: str, size: int = CHUNK_SIZE, overlap: int = CHUNK_OVERLAP)
     return chunks
 
 
-def load_documents() -> list[Document]:
+def load_documents(docs_dir: Path) -> list[Document]:
     docs = []
-    for path in sorted(DOCS_DIR.glob("*.md")):
+    for path in sorted(docs_dir.glob("*.md")):
         for title, body in split_by_heading(path.read_text(encoding="utf-8")):
-            for i, piece in enumerate(split_fixed(body)):
-                source = f"{path.name} > {title}" if title else path.name
-                docs.append(Document(page_content=piece, metadata={"source": source, "part": i}))
+            for piece in split_fixed(body):
+                docs.append(Document(page_content=piece, metadata={"file": path.name, "heading": title}))
     return docs
 
 
-@lru_cache(maxsize=1)
-def embeddings():
-    provider, model = embedding_name().split(":", 1)
-    if provider == "openai":
-        from langchain_openai import OpenAIEmbeddings
-        return OpenAIEmbeddings(model=model)
-    from langchain_google_genai import GoogleGenerativeAIEmbeddings
-    return GoogleGenerativeAIEmbeddings(model=model)
+class FakeEmbeddings(Embeddings):
+    """글자 1·2-gram 해시를 누적한 벡터. 겹치는 글자가 많을수록 코사인이 커져 테스트에서도 순위가 의미 있다 (hash() 대신 crc32: 프로세스마다 같은 값)."""
+
+    def embed_documents(self, texts: list[str]) -> list[list[float]]:
+        return [self._vector(t) for t in texts]
+
+    def embed_query(self, text: str) -> list[float]:
+        return self._vector(text)
+
+    @staticmethod
+    def _vector(text: str) -> list[float]:
+        s, v = "".join(text.split()), [0.0] * FAKE_DIM
+        for gram in [*s, *(a + b for a, b in zip(s, s[1:]))]:
+            v[zlib.crc32(gram.encode()) % FAKE_DIM] += 1.0
+        return v
 
 
-def _load_cache() -> dict:
-    if EMBED_CACHE_PATH.exists():
-        return json.loads(EMBED_CACHE_PATH.read_text(encoding="utf-8"))
-    return {}
+def make_embeddings(name: str) -> Embeddings:
+    """EMBEDDING_MODEL 값("provider:model", 예: ollama:nomic-embed-text)으로 임베딩을 만든다. "fake"는 네트워크 없음."""
+    if name == "fake":
+        return FakeEmbeddings()
+    from langchain.embeddings import init_embeddings
+    return init_embeddings(name)
 
 
-def embed_texts(texts: list[str]) -> list[list[float]]:
-    """문서 임베딩은 (모델, 텍스트) 단위로 디스크에 캐시해 실행할 때마다 다시 호출하지 않는다."""
-    cache, prefix = _load_cache(), embedding_name() + "::"
-    missing = [t for t in texts if prefix + t not in cache]
-    if missing:
-        for t, v in zip(missing, embeddings().embed_documents(missing)):
-            cache[prefix + t] = v
-        EMBED_CACHE_PATH.write_text(json.dumps(cache), encoding="utf-8")
-    return [cache[prefix + t] for t in texts]
+def _read_cache(path: Path) -> dict:
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except (FileNotFoundError, json.JSONDecodeError):      # 없거나 깨진 캐시는 비운 채로 시작해 곧바로 새로 쓴다
+        return {}
 
 
-class SimpleVectorStore:
-    """임베딩 + 코사인 유사도 검색 (similarity_search 인터페이스만 맞춤)."""
+class VectorIndex:
+    """임베딩 + 코사인 유사도 검색. 문서 임베딩은 (모델, 텍스트) 단위로 디스크에 캐시해 재색인 때 바뀐 문단만 다시 부른다."""
 
-    def __init__(self, docs: list[Document]):
-        self.docs = docs
-        self.vectors = [self._norm(v) for v in embed_texts([d.page_content for d in docs])]
+    def __init__(self, docs: list[Document], embedder: Embeddings, model: str, cache_path: Optional[Path]):
+        self.docs, self._embedder = docs, embedder
+        self.vectors = [self._norm(v) for v in self._embed_docs([d.page_content for d in docs], model, cache_path)]
+
+    def _embed_docs(self, texts: list[str], model: str, cache_path: Optional[Path]) -> list[list[float]]:
+        if cache_path is None:                       # fake는 계산이 싸서 캐시하지 않는다
+            return self._embedder.embed_documents(texts) if texts else []
+        cache, prefix = _read_cache(cache_path), model + "::"
+        missing = list(dict.fromkeys(t for t in texts if prefix + t not in cache))
+        if missing:
+            for t, v in zip(missing, self._embedder.embed_documents(missing)):
+                cache[prefix + t] = v
+            tmp = cache_path.with_suffix(".tmp")      # 쓰다 죽어도 캐시가 깨지지 않게 교체 방식으로 저장
+            tmp.write_text(json.dumps(cache), encoding="utf-8")
+            os.replace(tmp, cache_path)
+        return [cache[prefix + t] for t in texts]
 
     @staticmethod
     def _norm(v: list[float]) -> list[float]:
@@ -109,25 +134,65 @@ class SimpleVectorStore:
         return [x / n for x in v]
 
     def similarity_search(self, query: str, k: int = 3) -> list[Document]:
-        q = self._norm(embeddings().embed_query(query))
+        if not self.docs:
+            return []
+        q = self._norm(self._embedder.embed_query(query))
         scored = sorted(zip(self.docs, self.vectors), key=lambda dv: -sum(a * b for a, b in zip(q, dv[1])))
         return [d for d, _ in scored[:k]]
 
 
-@lru_cache(maxsize=1)
-def experience_store() -> SimpleVectorStore:
-    return SimpleVectorStore(load_documents())
+def _signature(files: list[Path]) -> tuple:
+    """색인이 낡았는지 보는 지문: (경로, mtime, 크기). 파일이 추가·삭제돼도 달라진다."""
+    sig = []
+    for p in files:
+        with contextlib.suppress(FileNotFoundError):       # glob과 stat 사이에 지워진 파일은 없는 셈 친다
+            st = p.stat()
+            sig.append((str(p), st.st_mtime_ns, st.st_size))
+    return tuple(sig)
 
 
-def load_bank() -> list[dict]:
-    if not BANK_PATH.exists():          # 표현집은 선택 입력
-        return []
-    return json.loads(BANK_PATH.read_text(encoding="utf-8"))["expressions"]
+class Retriever:
+    """경험 문서·표현집 검색기. 결과는 mcp_spec.LABEL_* 형식 `[출처 라벨]`로 시작한다. 동기 메서드라 서버가 to_thread로 부르고 (ADR-0005), 색인은 락으로 직렬화해 중복 임베딩을 막는다."""
 
+    def __init__(self, paths: DataPaths, embedder: Optional[Embeddings] = None, model: Optional[str] = None):
+        self._paths = paths
+        self._model = model or os.getenv("EMBEDDING_MODEL", "fake")
+        self._embedder = embedder
+        self._lock = threading.Lock()
+        self._built: dict[str, tuple[tuple, VectorIndex]] = {}
 
-@lru_cache(maxsize=1)
-def bank_store() -> SimpleVectorStore:
-    return SimpleVectorStore([
-        Document(page_content=f"{e['situation']} — {e['phrase']}", metadata=e)
-        for e in load_bank()
-    ])
+    def _index(self, kind: str, files: list[Path], load: Callable[[], list[Document]]) -> VectorIndex:
+        sig = _signature(files)
+        with self._lock:
+            hit = self._built.get(kind)
+            if hit and hit[0] == sig:
+                return hit[1]
+            if self._embedder is None:               # 첫 검색 때 만든다 (키·모델이 없어도 서버 기동은 되도록)
+                self._embedder = make_embeddings(self._model)
+            cache = None if self._model == "fake" else self._paths.embed_cache
+            index = VectorIndex(load(), self._embedder, self._model, cache)
+            self._built[kind] = (sig, index)
+            return index
+
+    def search_experience(self, query: str, k: int = 3) -> str:
+        docs_dir = self._paths.docs_dir
+        index = self._index("experience", sorted(docs_dir.glob("*.md")), lambda: load_documents(docs_dir))
+        hits = index.similarity_search(query, k=k)
+        if not hits:
+            return NO_EXPERIENCE
+        return "\n\n".join(
+            f"{mcp_spec.LABEL_EXPERIENCE.format(file=d.metadata['file'], heading=d.metadata['heading'] or '본문')}\n"
+            f"{d.page_content}" for d in hits)
+
+    def search_bank(self, query: str, k: int = 3) -> str:
+        bank_path = self._paths.expression_bank         # 사용자 표현집이 없으면 templates 예시
+        index = self._index("bank", [bank_path], lambda: [
+            Document(page_content=f"{e['situation']} — {e['phrase']}", metadata=e)
+            for e in json.loads(bank_path.read_text(encoding="utf-8"))["expressions"]])
+        if not index.docs:
+            return NO_BANK
+        hits = index.similarity_search(query, k=k + 2)
+        hits.sort(key=lambda d: not d.metadata.get("verified", False))       # verified 먼저
+        return "\n".join(
+            f"{mcp_spec.LABEL_BANK.format(id=d.metadata['id'], verified=str(d.metadata.get('verified', False)).lower())} "
+            f"{d.metadata['situation']} — {d.metadata['phrase']}" for d in hits[:k])
