@@ -67,10 +67,15 @@ def main(cases_file: str, rep: str) -> None:
         except subprocess.TimeoutExpired:
             row = {"id": c["id"], "input": c["input"], "expected": c["intent"], "error": "TIMEOUT",
                    "seconds": CASE_TIMEOUT}
-        if row.get("card"):
-            row["judge"] = asyncio.run(judge(row["card"], applicant))
         print(f"{c['id']} {row.get('intent')} {row['seconds']}s err={row.get('error', '')}", flush=True)
         rows.append(row)
+
+    async def judge_all() -> None:   # 이벤트 루프 하나에서 채점 (asyncio.run을 여러 번 부르면 캐시된 클라이언트가 닫힌 루프를 쓴다)
+        for r in rows:
+            if r.get("card"):
+                r["judge"] = await judge(r["card"], applicant)
+
+    asyncio.run(judge_all())
     summary = summarize(rows)
     print(save(f"v1_{Path(cases_file).stem}_r{rep}.json", {"version": "v1", "model": MODEL, "summary": summary,
                                                            "rows": rows}))
