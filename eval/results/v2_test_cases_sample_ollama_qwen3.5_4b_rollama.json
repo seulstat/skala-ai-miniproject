@@ -1,0 +1,311 @@
+{
+  "version": "v2",
+  "model": "ollama:qwen3.5:4b",
+  "summary": {
+    "n": 10,
+    "M1_routing": "8/10",
+    "M2_structured": "5/7",
+    "M3_banned_final": 1,
+    "M4_personalization": 5,
+    "M4_interview_fit": 5,
+    "M5_avg_seconds_generate": 359.32,
+    "M5_avg_seconds_all": 180.44,
+    "tool_calls_avg": 3,
+    "rewrites_avg": 0.6,
+    "errors": {}
+  },
+  "rows": [
+    {
+      "id": "S01",
+      "input": "고객 이탈을 미리 예측하는 모델을 만들었어요",
+      "expected": "express",
+      "intent": "out_of_scope",
+      "tools": [],
+      "rewrites": 0,
+      "notices": [],
+      "seconds": 1.5
+    },
+    {
+      "id": "S02",
+      "input": "처음엔 정확도만 봤는데 쿠폰 비용까지 함께 보도록 평가 기준을 바꿨어요",
+      "expected": "express",
+      "intent": "express",
+      "tools": [
+        "get_job_posting",
+        "search_expression_bank",
+        "search_my_experience"
+      ],
+      "rewrites": 0,
+      "notices": [],
+      "card": {
+        "korean_prompt": "처음엔 정확도만 봤는데 쿠폰 비용까지 함께 보도록 평가 기준을 바꿨어요",
+        "mode": "express",
+        "formal_expression": "Initially, accuracy was the sole criterion for evaluation; however, upon realizing that incorrect predictions with high accuracy result in unnecessary coupon costs, we adjusted the evaluation framework to include cost efficiency metrics alongside precision.",
+        "casual_expression": "At first I only looked at accuracy, but when I realized that false positives waste our coupon budget, we decided to also factor in cost into how we judge the model performance.",
+        "answer_draft": "Initially, my evaluation focused solely on model accuracy. However, as we discussed with the supervisor, we recognized that high accuracy without considering cost leads to unnecessary coupon expenses, particularly when targeting general customer segments. Consequently, we revised our evaluation framework to include cost efficiency metrics alongside precision. This shift allowed us to target only customers in the top 20% for churn prediction, successfully capturing 71% of churners while simultaneously boosting coupon conversion rates by 2.3x within the same budget.",
+        "chunks": [
+          {
+            "phrase": "adjusted our evaluation framework",
+            "note": "평가 기준을 바꿨다"
+          },
+          {
+            "phrase": "factor in cost efficiency metrics alongside precision",
+            "note": "정확도와 비용 모두 고려하다"
+          },
+          {
+            "phrase": "high accuracy without considering cost",
+            "note": "고려해야 할 이유 설명 (예: 불필요한 비용 발생)"
+          }
+        ],
+        "note": "해당 문장은 졸업 프로젝트에서 실제로 겪은 경험과 연결됩니다. 정확한 수치와 맥락이 있습니다 (적절히 변경 가능). 평가 기준을 바꾸는 과정과 그 배경을 영어로 잘 서술할 수 있어야 하므로, '평가 기준 수정'과 '왜 바꿨는지 설명'에 초점을 맞춰 짧은 문장으로 구성했습니다. 이 표현은 면접관에게 전문성을 보여주는 동시에 실제 상황을 설명하는 데 최적화되어 있습니다.",
+        "evidence": [
+          "experience.md > 고객 이탈 예측 졸업 프로젝트",
+          "job_posting > 영어 면접 안내"
+        ]
+      },
+      "structured_ok": true,
+      "warning": null,
+      "banned": [],
+      "seconds": 24.3,
+      "judge": {
+        "personalization": 5,
+        "interview_fit": 5,
+        "reason": "The provided expressions clearly reflect the specific project experience and analytical thought process of the candidate, linking the adjustments made to evaluation criteria to relevant industry scenarios. This relevance to both the job description and actual project insight showcases strong alignment with what the interviewers are seeking."
+      }
+    },
+    {
+      "id": "S03",
+      "input": "배송 지연의 61%가 특정 택배사의 집하 구간에 몰려 있다는 걸 찾았어요",
+      "expected": "express",
+      "intent": "out_of_scope",
+      "tools": [],
+      "rewrites": 0,
+      "notices": [],
+      "seconds": 1.9
+    },
+    {
+      "id": "S04",
+      "input": "두 달 사이 변화라 계절 요인은 완전히 배제하지 못했다고 솔직하게 말하고 싶어요",
+      "expected": "express",
+      "intent": "express",
+      "tools": [
+        "search_expression_bank"
+      ],
+      "rewrites": 1,
+      "notices": [],
+      "card": {
+        "korean_prompt": "두 달 사이 변화라 계절 요인은 완전히 배제하지 못했다고 솔직하게 말하고 싶어요",
+        "mode": "express",
+        "formal_expression": "While seasonal variations over the two-month period could not be entirely eliminated, I believe it is more valuable to be transparent about this residual uncertainty than to present results as if they were immune to external factors.",
+        "casual_expression": "Seasonality wasn't completely ruled out in that two-month span—there's still a small chance extreme weather played a role—but I think we should own that limitation honestly rather than pretending our analysis was flawless.",
+        "answer_draft": null,
+        "chunks": [
+          {
+            "phrase": "could not be entirely eliminated",
+            "note": "완전히 배제하지 못했다는 정확한 표현"
+          },
+          {
+            "phrase": "residual uncertainty",
+            "note": "잔여 불확실성 (계절 요인이 완전히 제거되지 않은 부분을 전문적으로 말함)"
+          },
+          {
+            "phrase": "own that limitation honestly",
+            "note": "한계를 솔직하게 인정하는 태도"
+          }
+        ],
+        "note": "이 표현은 면접관과의 대화에서 '완벽하지 않았다고' 솔직하게 인정할 때 쓰세요. OPIc IM2 수준에 맞춰 자연스럽고 정중한 어조를 유지하며, 'pretending... flawless'와 같은 부정적 표현 대신 긍정적 관점 ('more valuable to be transparent')으로 연결해 신뢰를 얻습니다. 이미 익힌 'adjusted evaluation framework' 경험과 맥락을 같이 할 때 효과적입니다.",
+        "evidence": [
+          "search_expression_bank -> 한계 인정 표현 찾기"
+        ]
+      },
+      "structured_ok": true,
+      "warning": null,
+      "banned": [],
+      "seconds": 47.0,
+      "judge": {
+        "personalization": 5,
+        "interview_fit": 5,
+        "reason": "This response effectively incorporates the applicant's experience discussing data analysis and limitations transparently, which reflects the qualities desired for the e-commerce data analyst role in a manner aligned with the job announcement."
+      }
+    },
+    {
+      "id": "S05",
+      "input": "분석 결과를 운영 팀장님이 매주 볼 수 있게 대시보드로 만들어 드렸어요",
+      "expected": "express",
+      "intent": "express",
+      "tools": [
+        "search_expression_bank"
+      ],
+      "rewrites": 0,
+      "notices": [],
+      "card": {
+        "korean_prompt": "분석 결과를 운영 팀장님이 매주 볼 수 있게 대시보드로 만들어 드렸어요",
+        "mode": "express",
+        "formal_expression": "I built an interactive dashboard to help the operations manager review key analytics on a weekly basis.",
+        "casual_expression": "I made it easy for our team lead to see how things were going every week with a simple chart.",
+        "answer_draft": "None",
+        "chunks": [
+          {
+            "phrase": "built an interactive dashboard",
+            "note": "주어진 분석 결과를 시각화하여 보고하는 표현"
+          },
+          {
+            "phrase": "help the operations manager review",
+            "note": "주변에 보여주기 위해 만든다는 의미로 쓰이는 표현"
+          },
+          {
+            "phrase": "on a weekly basis",
+            "note": "매우 짧은 주기로 반복되는 표현"
+          }
+        ],
+        "note": "이 지원자에게는 경영학·통계학 복수전공 배경과 물류 스타트업 인턴 경험 (배송 지연 원인 분석) 이 잘 맞습니다. 분석 결과를 시각화하여 경영진에게 매주 보고하는 표현은, 서류에서 언급된 \"운영 팀장님께 데이터가 어떻게 사용되는지 알려주는 것\"을 구체적으로 보여줍니다. 또한, 이는 \"숫자로 문제를 좁히고, 현업이 바로 쓸 수 있는 형태로 전달하는 사람\"이라는 면접 목표와도 잘 연결됩니다. 난이도는 OPIc IM2 수준에 맞춰 명확하고 직관적인 영문으로 작성되었습니다.",
+        "evidence": [
+          "experience.md > 물류 스타트업 데이터 분석 인턴 (2개월)",
+          "job_posting > 운영 팀장님께 데이터가 어떻게 사용되는지"
+        ]
+      },
+      "structured_ok": true,
+      "warning": null,
+      "banned": [],
+      "seconds": 17.4,
+      "judge": {
+        "personalization": 5,
+        "interview_fit": 5,
+        "reason": "The candidate effectively demonstrates their analytical skills through specific examples from their internship experience, emphasizing how they used a dashboard to assist the operations manager. The response aligns closely with the job posting's points about data analysis and communication with stakeholders. Additionally, the language used is appropriate for an OPIc IM2 level, making it easy to understand while also showcasing their expertise in using data in a practical context."
+      }
+    },
+    {
+      "id": "S06",
+      "input": "Could you briefly introduce yourself?",
+      "expected": "answer",
+      "intent": "answer",
+      "tools": [
+        "get_job_posting",
+        "search_my_experience",
+        "search_expression_bank",
+        "search_expression_bank",
+        "get_job_posting",
+        "search_my_experience",
+        "search_my_experience",
+        "search_expression_bank"
+      ],
+      "rewrites": 2,
+      "notices": [],
+      "card": {
+        "korean_prompt": "Could you briefly introduce yourself?",
+        "mode": "answer",
+        "formal_expression": "I hold a double major in Business Administration and Statistics, which allows me to treat data not as abstract numbers but as signals pointing toward real business issues. My focus is on converting complex analytical findings into straightforward insights that stakeholders can rely on to make timely decisions. Through a project at an online mall, I built an interactive dashboard helping operations managers track key metrics weekly. During an internship at a logistics startup, I examined delivery delays by segment; rather than claiming my model was flawless, I found that discussing its boundaries and identifying where predictions might differ from reality was more useful for finding actual bottlenecks. My goal is to join your e-commerce platform, where I can use these skills to translate data findings for international partners and drive efficiency through clear, collaborative analysis.",
+        "casual_expression": "I double majored in Business Administration and Statistics, so I see data as tools to solve real problems rather than just numbers. At a project with an online mall, I built a dashboard that helped managers track key metrics weekly. At a logistics startup, I looked at why deliveries were delayed by segment; instead of claiming my model was perfect, I learned discussing its limits and where predictions might not match reality is more useful for finding real bottlenecks. I'm here to join your e-commerce platform so I can help international partners understand data findings clearly and work together to improve efficiency.",
+        "answer_draft": "I hold a double major in Business Administration and Statistics, which allows me to treat data not as abstract numbers but as signals pointing toward real business issues. My focus is on converting complex analytical findings into straightforward insights that stakeholders can rely on to make timely decisions. Through a project at an online mall, I built an interactive dashboard helping operations managers track key metrics weekly. During an internship at a logistics startup, I examined delivery delays by segment; rather than claiming my model was flawless, I found that discussing its boundaries and identifying where predictions might differ from reality was more useful for finding actual bottlenecks. My goal is to join your e-commerce platform, where I can use these skills to translate data findings for international partners and drive efficiency through clear, collaborative analysis.",
+        "chunks": [
+          {
+            "phrase": "signals pointing toward real business issues",
+            "note": "데이터가 실제 비즈니스 문제를 해결할 신호임을 강조 (과장된 'indicators' 대신)"
+          },
+          {
+            "phrase": "identifying where predictions might differ from reality",
+            "note": "모델의 한계를 정직하게 말하며, 확정적 표현을 피함"
+          },
+          {
+            "phrase": "translate data findings for international partners",
+            "note": "이커머스 해외 파트너와의 소통 능력을 강조 (지원 동기 연결)"
+          }
+        ],
+        "note": "과장된 형용사 'flawless'와 확정적인 표현 'will cause', 'cause' 대신 조건부 및 부정확할 수 있음을 포함하는 표현으로 수정했습니다. 지원자의 경험을 기반으로 한 수치나 사실은 기존 카드에 있는 내용만 사용하였습니다. 공식적이고 부드러운 어조로 유지하면서도 면접 평가 포인트인 '정확하고 단순한 전달'에 부합하는 문장 구조를 채택했습니다.",
+        "evidence": [
+          "experience.md > 자기소개서 (해외 물류 파트너, 분석의 가치)",
+          "job_posting > 영어 면접 안내 (정확하고 단순하게 전달)",
+          "expression_bank > 조건부 표현 활용"
+        ]
+      },
+      "structured_ok": true,
+      "warning": "재작성 2회 후에도 검수 미통과: R6 'perfect'",
+      "banned": [
+        [
+          "R6",
+          "perfect"
+        ]
+      ],
+      "seconds": 1684.7,
+      "judge": {
+        "personalization": 5,
+        "interview_fit": 5,
+        "reason": "The introduction reflects a strong grasp of both the applicant's background in Business Administration and Statistics and their practical experience relevant to the e-commerce industry. It includes specific examples of past projects and skills that align perfectly with the job description, particularly the focus on translating data findings to international partners. The language is clear, precise, and maintains a professional yet approachable tone, fulfilling the requirements for effective communication in the interview."
+      }
+    },
+    {
+      "id": "S07",
+      "input": "면접 질문: 분석 결과가 현업의 예상과 다를 때 어떻게 설득하겠습니까?",
+      "expected": "answer",
+      "intent": "answer",
+      "tools": [
+        "search_my_experience",
+        "search_expression_bank"
+      ],
+      "rewrites": 0,
+      "notices": [],
+      "card": {
+        "korean_prompt": "면접 질문: 분석 결과가 현업의 예상과 다를 때 어떻게 설득하겠습니까?",
+        "mode": "answer",
+        "formal_expression": "When an analysis result differs from operational expectations, I'd first validate the assumptions on both sides to pinpoint where data and reality diverge.",
+        "casual_expression": "I'd check if we were looking at the same numbers and ask what their experience says about it.",
+        "answer_draft": null,
+        "chunks": [
+          {
+            "phrase": "validate the assumptions on both sides",
+            "note": "양쪽의 가정 확인"
+          },
+          {
+            "phrase": "pinpoint where data and reality diverge",
+            "note": "데이터와 현실이 갈라진 지점 명확히"
+          }
+        ],
+        "note": "\"분석 결과가 다를 때 설득\"은 이 지원자의 경험을 그대로 반영했습니다. 고객 이탈 예측 프로젝트에서 지도교수님이 지적한 대로 '비용을 고려하지 않은 정확도만 높이는 것'은 실제 현업에는 도움이 안 된다는 점을 경험했고, 물류 인턴에서도 단순 보고서가 아니라 운영 팀장이 바로 볼 수 있는 대시보드 형식으로 데이터를 정리하는 것을 통해 설득력을 높였습니다. 이를 바탕으로 '양쪽의 가정을 검증하고 차이점을 명확히 하는 과정이 먼저 필요해'라고 두괄식으로 답변합니다. 근거로 사용된 경험(고객 이탈 예측 프로젝트, 물류 인턴)과 영어 면접 평가 포인트를 evidence에 명시했습니다. 표현은 지원자가 이미 OPIc IM2 자격증을 보유한 수준에 맞춰 학술적·전문적이되 구어적으로 자연스러운 형태로 구성했습니다.",
+        "evidence": [
+          "experience.md > 고객 이탈 예측 졸업 프로젝트",
+          "experience.md > 물류 스타트업 데이터 분석 인턴 (2개월)",
+          "E1"
+        ]
+      },
+      "structured_ok": true,
+      "warning": null,
+      "banned": [],
+      "seconds": 23.2,
+      "judge": {
+        "personalization": 5,
+        "interview_fit": 5,
+        "reason": "The applicant's response effectively incorporates specific experiences from their background, such as the customer churn prediction project and their internship, to form a well-structured answer. They reflect their ability to bridge the gap between analysis and real-world application, which aligns perfectly with the job requirements. The language used is appropriate for their OPIc IM2 level, combining academic and casual tones while ensuring clarity in communication, which is critical for the English interview evaluation."
+      }
+    },
+    {
+      "id": "S08",
+      "input": "오늘 복습할 카드 보여줘",
+      "expected": "review",
+      "intent": "review",
+      "tools": [],
+      "rewrites": 0,
+      "notices": [],
+      "seconds": 1.3
+    },
+    {
+      "id": "S09",
+      "input": "오늘 점심 메뉴 추천해줘",
+      "expected": "out_of_scope",
+      "intent": "out_of_scope",
+      "tools": [],
+      "rewrites": 0,
+      "notices": [],
+      "seconds": 1.2
+    },
+    {
+      "id": "S10",
+      "input": "파이썬으로 YOLO 학습 코드 짜줘",
+      "expected": "out_of_scope",
+      "intent": "out_of_scope",
+      "tools": [],
+      "rewrites": 0,
+      "notices": [],
+      "seconds": 1.9
+    }
+  ]
+}

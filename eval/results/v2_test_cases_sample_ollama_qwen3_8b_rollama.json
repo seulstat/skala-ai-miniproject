@@ -1,0 +1,147 @@
+{
+  "version": "v2",
+  "model": "ollama:qwen3:8b",
+  "summary": {
+    "n": 10,
+    "M1_routing": "9/10",
+    "M2_structured": "0/7",
+    "M3_banned_final": 0,
+    "M4_personalization": null,
+    "M4_interview_fit": null,
+    "M5_avg_seconds_generate": null,
+    "M5_avg_seconds_all": 19.86,
+    "tool_calls_avg": null,
+    "rewrites_avg": null,
+    "errors": {
+      "LLM_OUTPUT_INVALID": 6
+    }
+  },
+  "rows": [
+    {
+      "id": "S01",
+      "input": "고객 이탈을 미리 예측하는 모델을 만들었어요",
+      "expected": "express",
+      "intent": "express",
+      "tools": [
+        "search_my_experience",
+        "search_expression_bank"
+      ],
+      "rewrites": 0,
+      "notices": [],
+      "error": "LLM_OUTPUT_INVALID",
+      "seconds": 27.1
+    },
+    {
+      "id": "S02",
+      "input": "처음엔 정확도만 봤는데 쿠폰 비용까지 함께 보도록 평가 기준을 바꿨어요",
+      "expected": "express",
+      "intent": "out_of_scope",
+      "tools": [],
+      "rewrites": 0,
+      "notices": [],
+      "seconds": 1.6
+    },
+    {
+      "id": "S03",
+      "input": "배송 지연의 61%가 특정 택배사의 집하 구간에 몰려 있다는 걸 찾았어요",
+      "expected": "express",
+      "intent": "express",
+      "tools": [
+        "search_my_experience",
+        "search_expression_bank"
+      ],
+      "rewrites": 0,
+      "notices": [],
+      "error": "LLM_OUTPUT_INVALID",
+      "seconds": 20.5
+    },
+    {
+      "id": "S04",
+      "input": "두 달 사이 변화라 계절 요인은 완전히 배제하지 못했다고 솔직하게 말하고 싶어요",
+      "expected": "express",
+      "intent": "express",
+      "tools": [
+        "search_my_experience",
+        "search_expression_bank"
+      ],
+      "rewrites": 0,
+      "notices": [],
+      "error": "LLM_OUTPUT_INVALID",
+      "seconds": 22.2
+    },
+    {
+      "id": "S05",
+      "input": "분석 결과를 운영 팀장님이 매주 볼 수 있게 대시보드로 만들어 드렸어요",
+      "expected": "express",
+      "intent": "express",
+      "tools": [
+        "search_my_experience",
+        "search_expression_bank"
+      ],
+      "rewrites": 0,
+      "notices": [],
+      "error": "LLM_OUTPUT_INVALID",
+      "seconds": 41.3
+    },
+    {
+      "id": "S06",
+      "input": "Could you briefly introduce yourself?",
+      "expected": "answer",
+      "intent": "answer",
+      "tools": [
+        "search_my_experience",
+        "get_job_posting",
+        "search_expression_bank"
+      ],
+      "rewrites": 0,
+      "notices": [],
+      "error": "LLM_OUTPUT_INVALID",
+      "seconds": 35.1
+    },
+    {
+      "id": "S07",
+      "input": "면접 질문: 분석 결과가 현업의 예상과 다를 때 어떻게 설득하겠습니까?",
+      "expected": "answer",
+      "intent": "answer",
+      "tools": [
+        "search_my_experience",
+        "search_expression_bank",
+        "get_job_posting"
+      ],
+      "rewrites": 0,
+      "notices": [],
+      "error": "LLM_OUTPUT_INVALID",
+      "seconds": 36.2
+    },
+    {
+      "id": "S08",
+      "input": "오늘 복습할 카드 보여줘",
+      "expected": "review",
+      "intent": "review",
+      "tools": [],
+      "rewrites": 0,
+      "notices": [],
+      "seconds": 5.9
+    },
+    {
+      "id": "S09",
+      "input": "오늘 점심 메뉴 추천해줘",
+      "expected": "out_of_scope",
+      "intent": "out_of_scope",
+      "tools": [],
+      "rewrites": 0,
+      "notices": [],
+      "seconds": 4.8
+    },
+    {
+      "id": "S10",
+      "input": "파이썬으로 YOLO 학습 코드 짜줘",
+      "expected": "out_of_scope",
+      "intent": "out_of_scope",
+      "tools": [],
+      "rewrites": 0,
+      "notices": [],
+      "seconds": 3.9
+    }
+  ]
+}
