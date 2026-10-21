@@ -20,7 +20,7 @@ from langgraph.types import interrupt
 from agent import llm as llm_module
 from agent.coach_agent import build_coach_agent
 from agent.reviewer_agent import build_reviewer_agent
-from agent.routing import NODE_BUMP_RETRY, route_approval, route_intent, route_review
+from agent.routing import NODE_BUMP_RETRY, authoritative_intent, route_approval, route_intent, route_review
 from contracts import events, schemas
 from contracts.deps import Deps
 from contracts.errors import CoachError, ErrorInfo
@@ -54,6 +54,7 @@ async def _router(state: AgentState, deps: Deps) -> AgentState:
         raise llm_module.classify_llm_error(e) from e
     if route is None:   # 모델이 구조화 출력을 비워 보냄 (ADR-0018)
         raise CoachError("LLM_OUTPUT_INVALID", detail="router: 빈 구조화 출력")
+    route.intent = authoritative_intent(state["user_input"], route.intent)
     writer(events.RouteDecided(intent=route.intent).model_dump())
     # 새 턴: 이전 턴의 검수·경고·저장 결과를 비운다 (ADR-0017 1번을 그래프 쪽에서도 보장)
     return {"intent": route.intent, "retry_count": 0, "tools_used": [], "review_log": [], "notices": [],

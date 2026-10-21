@@ -42,3 +42,9 @@ async def test_review_intent_shows_saved_cards_when_nothing_is_due(tmp_path):
         {"user_input": "오늘 복습할 카드 보여줘"}, {"configurable": {"thread_id": "r"}}, stream_mode="custom")]
     reply = got[-1].reply
     assert "C0001" in reply and "최근 저장한 카드" in reply
+
+
+def test_review_hint_overrides_small_router():
+    from agent.routing import authoritative_intent
+    assert authoritative_intent("오늘 복습할 카드 보여줘", "express") == "review"
+    assert authoritative_intent("배송 지연 민원을 줄였다고 말하고 싶어", "express") == "express"
