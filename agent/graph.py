@@ -52,8 +52,12 @@ async def _router(state: AgentState, deps: Deps) -> AgentState:
         )
     except Exception as e:
         raise llm_module.classify_llm_error(e) from e
+    if route is None:   # 모델이 구조화 출력을 비워 보냄 (ADR-0018)
+        raise CoachError("LLM_OUTPUT_INVALID", detail="router: 빈 구조화 출력")
     writer(events.RouteDecided(intent=route.intent).model_dump())
-    return {"intent": route.intent, "retry_count": 0, "tools_used": [], "review_log": [], "notices": []}
+    # 새 턴: 이전 턴의 검수·경고·저장 결과를 비운다 (ADR-0017 1번을 그래프 쪽에서도 보장)
+    return {"intent": route.intent, "retry_count": 0, "tools_used": [], "review_log": [], "notices": [],
+            "review": None, "warning": None, "saved_card_id": None, "next_review": None}
 
 
 async def _coach(state: AgentState, deps: Deps) -> AgentState:
@@ -78,6 +82,8 @@ async def _coach(state: AgentState, deps: Deps) -> AgentState:
     except Exception as e:
         raise llm_module.classify_llm_error(e) from e
 
+    if result.get("structured_response") is None:   # ADR-0018
+        raise CoachError("LLM_OUTPUT_INVALID", detail="coach: 빈 구조화 출력")
     card = result["structured_response"].model_dump()
     card["mode"] = state["intent"]
     attempt = state.get("retry_count", 0) + 1

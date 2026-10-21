@@ -1,6 +1,6 @@
 # ADR-0017: API가 그래프를 구동하는 규칙 — 새 턴 입력 초기화, 승인 직렬화, 저장 실패 재시도
 
-- 상태: Proposed
+- 상태: Accepted (Lead, 2026-10-21 CP2) — 1번(새 턴 초기화)은 그래프 router에서도 보장하도록 보강
 - 날짜: 2026-10-21
 - 작성: api
 - 관련: design.md §5 (`/chat/stream`·`/chat/resume`·`/chat/pending`), ADR-0006(HITL), ADR-0012(`STORE_ERROR`), agent/graph.py (A1 소유, 수정하지 않음)

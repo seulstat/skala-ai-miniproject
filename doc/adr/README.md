@@ -20,6 +20,9 @@
 | [0013](0013-fake-model-needs-bind-tools.md) | 테스트용 fake 모델에 bind_tools를 추가한 서브클래스 | Accepted | 2026-10-20 | core | ADR-0001 보완 |
 | [0014](0014-explicit-writer-for-nested-subgraphs.md) | 중첩 서브그래프·Tool에는 바깥 노드가 writer를 넘긴다 | Accepted | 2026-10-20 | core | |
 | [0015](0015-reviewer-persona-rules-via-paths-not-mcp-prompt.md) | Reviewer가 MCP Prompt 대신 paths로 규칙 읽기 | **Rejected** | 2026-10-20 | core | ADR-0004 유지 |
+| 0016 | 웹 계약 보완: REST 응답 본문·프로필 404·BACKEND_UNAVAILABLE | Accepted (계약 반영 완료, 파일은 CP3 병합) | 2026-10-21 | web | |
+| [0017](0017-api-drives-graph-turn-reset-lock-retry.md) | API가 새 턴 초기화·스레드 락·저장 재시도를 맡는다 | Accepted | 2026-10-21 | api | |
+| [0018](0018-empty-structured-output-is-llm-output-invalid.md) | 빈 구조화 출력은 LLM_OUTPUT_INVALID | Accepted | 2026-10-21 | api | |
 
 ## design.md ↔ ADR 대응
 

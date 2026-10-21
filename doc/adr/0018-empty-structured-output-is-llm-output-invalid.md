@@ -1,6 +1,6 @@
 # ADR-0018: 구조화 출력이 비어 있으면 노드가 LLM_OUTPUT_INVALID로 올린다
 
-- 상태: Proposed (A1 `agent/graph.py` 수정 요청 — A3는 수정하지 않는다)
+- 상태: Accepted (Lead, 2026-10-21 CP2) — router·coach에 반영(Lead 통합 수정)
 - 날짜: 2026-10-21
 - 작성: api
 - 관련: design.md §6 테스트 11, ADR-0012(`LLM_OUTPUT_INVALID`), handoff/core.md, agent/graph.py `_router`·`_coach`

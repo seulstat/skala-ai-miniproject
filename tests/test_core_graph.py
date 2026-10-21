@@ -112,7 +112,7 @@ async def test_reject_does_not_save_card(tmp_path):
     final = await graph.ainvoke(Command(resume=ResumeValue(approve=False)), CFG)
 
     assert final["approved"] is False
-    assert "saved_card_id" not in final
+    assert final.get("saved_card_id") is None   # 새 턴 초기화로 None일 수 있다 (ADR-0017)
     assert final["final_message"].startswith("저장하지 않았습니다")
     assert await store.list_cards() == []
 

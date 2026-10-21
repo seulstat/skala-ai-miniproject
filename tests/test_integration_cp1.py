@@ -70,3 +70,21 @@ async def test_graph_e2e_with_real_mcp_server(tmp_path, monkeypatch):
             assert final["saved_card_id"] == "C0001" and final["next_review"] == "2026-10-22"
     finally:
         await client.stop()
+
+
+async def test_empty_structured_output_raises_llm_output_invalid(tmp_path):
+    """ADR-0018: router가 빈 구조화 출력을 받으면 LLM_OUTPUT_INVALID (fake 기본 응답과 같은 상황)."""
+    import pytest
+    from langgraph.checkpoint.memory import InMemorySaver
+
+    from contracts.errors import CoachError
+
+    shutil.copytree(ROOT / "examples" / "sample_user", tmp_path, dirs_exist_ok=True)
+    paths = DataPaths(tmp_path)
+    empty = ToolCallingFakeChatModel(messages=iter([AIMessage(content="")]))
+    deps = Deps(fast_llm=empty, quality_llm=empty, mcp=None, store=SQLiteCardStore(paths.coach_db),
+                checkpointer=InMemorySaver(), paths=paths)
+    with pytest.raises(CoachError) as ei:
+        async for _ in build_graph(deps).astream({"user_input": "x"}, CFG, stream_mode="custom"):
+            pass
+    assert ei.value.info.code == "LLM_OUTPUT_INVALID"
