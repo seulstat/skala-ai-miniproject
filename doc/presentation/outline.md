@@ -1,5 +1,7 @@
 # 발표 구성안 — Interview Coach Agent
 
+> **확정본(5분 발표, 6장)**: https://claude.ai/artifact/8WKPRbFjMC7s29feDibnzN — 표지 / 문제→해결→결과 / 핵심 흐름·실행 화면 / 기술 요소 8칸 / Before·After + 측정이 찾은 결함 / 한계·트레이드오프·마무리. 10/13 발표 양식(남색·주황·연회색 카드). 아래는 처음 세운 14장 구성안으로, Q&A 대비 자료로 남긴다.
+
 > 평가: 기능 30 · Before/After 10(보너스) · 기술요소 30 · 한계·트레이드오프 20 · PPT 20. 순서는 design G5 "문제 → 개선 → Before/After → 한계".
 > 슬라이드 14장(본편 13 + 부록). 각 장: **핵심 메시지 한 줄** / 내용 / 쓸 자료 / 발표 멘트. 숫자는 `eval/results/`·`eval/before_after.ipynb` 출처.
 
