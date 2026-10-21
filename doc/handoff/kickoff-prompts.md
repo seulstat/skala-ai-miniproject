@@ -29,7 +29,7 @@ agent/ (단 agent/mcp_client.py 제외), tests/test_core_*.py, doc/handoff/core.
 - agent/reviewer_agent.py: LLM 검수 + agent/prompts.py banned_hits 규칙 검사 서브그래프 (규칙 위반은 LLM이 통과라고 해도 위반)
 - agent/graph.py: Supervisor — router → coach → reviewer ⟲(contracts.state.MAX_REWRITES) → approve(interrupt) → save/rejected, review_cards, out_of_scope. 노드는 모두 async, 이벤트는 contracts.events 모델로 get_stream_writer()
 - agent/store.py: contracts.deps.CardStore 구현 (SQLite coach.db, 단계 0·1·2 = D+1·D+3·D+7)
-- agent/prompts.py·agent/retry.py는 복사본이다. prompts.py의 `.config` import(TODO)를 deps.paths 기반으로 바꾼다
+- agent/prompts.py·agent/retry.py는 복사본이다. prompts.py의 `.config` import(TODO)를 없애고 reviewer_prompt는 규칙 텍스트를 인자로 받게 바꾼다. Reviewer는 규칙을 파일에서 직접 읽지 않고 **MCP Prompt `persona_review_prompt`(deps.mcp.get_prompt)로 받는다** (ADR-0004, design §3 MCP Prompt)
 - tests/test_contracts.py 마지막 테스트(스텁 그래프 스모크: 이벤트 전송·interrupt·AsyncSqliteSaver·resume)가 참고 구현이다
 
 [완료 기준]
@@ -64,7 +64,7 @@ agent/ (단 agent/mcp_client.py 제외), tests/test_core_*.py, doc/handoff/core.
 mcp_server.py, rag.py, agent/mcp_client.py, templates/, tests/test_mcp_*.py, doc/handoff/mcp.md, doc/adr/NNNN-*.md(새 Proposed만)
 
 [할 일]
-- mcp_server.py(fastmcp, stdio, 서버 이름 contracts.mcp_spec.SERVER_NAME): Tool search_my_experience·search_expression_bank(SearchArgs), Resource posting://{section}, Prompt persona_review_prompt(인자 없음). 이름·인자는 contracts.mcp_spec 상수만 사용
+- mcp_server.py(fastmcp, stdio, 서버 이름 contracts.mcp_spec.SERVER_NAME): Tool search_my_experience·search_expression_bank(SearchArgs), Resource posting://{section}, Prompt persona_review_prompt(인자 없음 — DataPaths.persona_rules 내용을 agent.prompts.reviewer_prompt(rules)로 렌더링한 system 프롬프트를 돌려준다). 이름·인자는 contracts.mcp_spec 상수만 사용
 - rag.py: `.config` 의존(TODO)을 DataPaths.from_env()·EMBEDDING_MODEL로 교체. 제목 단위 분할 → 임베딩 → 코사인 검색, 파일 mtime 변경 시 재색인, 결과에 contracts.mcp_spec.LABEL_* 형식 출처 라벨. EMBEDDING_MODEL=fake면 네트워크 없는 fake 임베딩
 - agent/mcp_client.py: coach 서버용으로 조정, find_* 탐색 유지, 의도적 flaky 데모 제거, contracts.deps.MCPPort 충족(call_tool은 str 반환, server 인자 없이 동작)
 - 표현집이 없으면 templates/expression_bank.template.json, 규칙은 DataPaths.persona_rules 사용

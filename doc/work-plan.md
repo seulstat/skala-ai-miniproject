@@ -91,7 +91,7 @@ skala-ai-miniproject/
   - `agent/deps.py`: `build_deps()` — Deps 조립 (정의는 `contracts/deps.py`)
   - `agent/tools.py`: MCP 래퍼 `@tool` 3종 — `deps.mcp`의 계약 인터페이스만 호출 (A2 구현 전에는 fixture 기반 fake MCP로 개발)
   - `agent/coach_agent.py`: `create_agent`(ReAct) 서브그래프, `ToolStrategy(ExpressionCard)`, `ToolCallLimitMiddleware`
-  - `agent/reviewer_agent.py`: LLM 검수 + `banned_hits` 규칙 검사 서브그래프
+  - `agent/reviewer_agent.py`: LLM 검수 + `banned_hits` 규칙 검사 서브그래프. 검수 규칙(system 프롬프트)은 MCP Prompt `persona_review_prompt`로 받는다 (`deps.mcp.get_prompt`, ADR-0004)
   - `agent/graph.py`: Supervisor 그래프 — router → coach → reviewer ⟲2 → approve(`interrupt`) → save/rejected, review_cards, out_of_scope. 모든 노드 `async`, 이벤트는 `contracts/events.py` 모델로 `get_stream_writer()` 전송
   - `agent/store.py`: SQLite 카드 저장·due 조회·복습 단계(0·1·2 = D+1·D+3·D+7)
   - 체크포인터: `AsyncSqliteSaver`
