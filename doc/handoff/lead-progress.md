@@ -17,6 +17,7 @@
 | 10/21 A1 최종 수정 후 | A1 3차 수정 + CP1 1단계 병합 | 22% | |
 | 10/21 A2 완료 후 | A2 구현(세션 다운·재개 포함) + A4 진행 중 | 47% | 세션 2개 병행으로 증가폭 큼 |
 | 10/21 10:28 | A4 완료, CP1 리뷰 게이트 | 51% | 창 재설정 14:00 (사용자 확인) |
+| 10/21 11:24 | A3 완료 | 68% | **소프트 한도 근접 → A3 1차 검증 후 정지**, 14:00 재설정 뒤 재개 |
 
 ## 마일스톤 상태
 
@@ -128,10 +129,21 @@
 - 사용자 리뷰 게이트 통과(보충 설명 후 승인), main `4383825` push
 - :8100·:8600 Base 데모 프로세스 확인 → 이미 종료돼 있음
 
+## A3 1차 검증 (2026-10-21 11:24, feat/api `625b96f`) — 여기서 정지
+- check.sh FAIL 0 · WARN 1(0017·0018 색인 미등록), 테스트 131 통과(api 58), 계약 미변경
+- 미검토: Proposed ADR-0017(API가 새 턴 입력 초기화 `FRESH_TURN`·스레드 락·저장 재시도), ADR-0018(빈 구조화 출력 → LLM_OUTPUT_INVALID). 두 건 모두 A1(agent/) 수정 요청을 포함
+- **CP2 위험**: A3 측정 qwen3:8b Coach 구조화 출력 성공률 1/6 → "ollama 승인 → 저장" 기준 미달 가능. 대응 후보: (a) CP2 정상 경로는 OpenAI(gpt-4o-mini)로 확인하고 ollama는 오류 경로·실패율 측정(한계 3)으로, (b) QUALITY_MODEL 조정(qwen3.5:4b 등)·프롬프트 조정
+- A3 메모: api worktree에서 `.env.example`이 작업 트리에서만 삭제돼 있었음(복원함, 원인 불명 — 다른 세션의 stash/checkout 의심, 재발 시 확인)
+
+## 재개 순서 (14:00 이후)
+1. 사용률 확인
+2. ADR-0017·0018 판정 → 필요한 A1 수정 지시(라우터 None 처리, 새 턴 초기화) 또는 수용
+3. feat/api 병합 → check.sh → CP2 스모크: `nomic-embed-text` 준비, `.env`, `bash sh/smoke_chat.sh fake` → ollama(또는 OpenAI) → 서버 재시작 후 pending 복원
+4. CP2 리뷰 게이트 → push → CP3(feat/web 병합 + A4 후속 BACKEND_UNAVAILABLE, 브라우저 E2E)
+
 ## 남은 항목
-- A3 착수 → CP2
-- CP3 때 feat/web 병합 + A4 후속
+- 위 재개 순서
 
 ## 다음 시작점
 - CP0 승인·push 완료(2026-10-20, `0b29d58`). Day2 오전 각 worktree에서 kickoff-prompts.md로 A1·A2·A4 착수. 일정 압축 조정안은 [next-steps.md](next-steps.md) — 확정 시 ADR-0010·work-plan §7 갱신
-- 새 세션이 이어받을 때: "skala-ai-miniproject의 Lead다. agent.md, doc/handoff/lead.md, doc/handoff/lead-progress.md, doc/handoff/next-steps.md를 읽어라. CP0은 통과·push됐고 A1·A2·A4가 worktree에서 작업 중이다. 먼저 사용자에게 현재 사용률을 묻고, 역할 agent의 보고·계약 변경 요청을 처리하며 CP1을 준비하라. 커밋에 AI 이름을 넣지 말 것."
+- 새 세션이 이어받을 때: "skala-ai-miniproject의 Lead다. agent.md, doc/handoff/lead-progress.md(특히 'A3 1차 검증'과 '재개 순서'), doc/handoff/api.md를 읽어라. CP1까지 통과·push됐고(main 4383825 이후), A1·A2는 main에 병합, A3(feat/api)·A4(feat/web)는 완료 후 미병합이다. 먼저 사용자에게 현재 사용률을 묻고 '재개 순서'대로 진행하라. 커밋에 AI 이름을 넣지 말 것."
