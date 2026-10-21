@@ -3,8 +3,10 @@
 # 실제 개인 서류는 쓰지 않는다 (design §8 개인정보). 기존 파일은 덮어쓰지 않는다 (-n).
 set -euo pipefail
 cd "$(dirname "$0")/.."
+# 명령에서 직접 준 COACH_DATA_DIR이 .env 값보다 우선한다
+GIVEN=${COACH_DATA_DIR:-}
 [ -f .env ] && set -a && . ./.env && set +a
-DEST=${COACH_DATA_DIR:-./data}
+DEST=${GIVEN:-${COACH_DATA_DIR:-./data}}
 mkdir -p "$DEST/docs"
 cp -n examples/sample_user/profile.json "$DEST/" || true
 cp -n examples/sample_user/job_posting.md "$DEST/" || true

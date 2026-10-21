@@ -35,6 +35,7 @@ async def _build_checkpointer(paths: DataPaths) -> AsyncSqliteSaver:
 
 async def build_deps() -> Deps:
     paths = DataPaths.from_env()
+    paths.docs_dir.mkdir(parents=True, exist_ok=True)   # 처음 켤 때 데이터 폴더가 없어도 DB를 만들 수 있게
     fast_llm = llm_module.make_llm(os.getenv("FAST_MODEL", "fake"))
     quality_llm = llm_module.make_llm(os.getenv("QUALITY_MODEL", "fake"))
     mcp = await _build_mcp(paths)
