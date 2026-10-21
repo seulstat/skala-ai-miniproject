@@ -78,6 +78,12 @@
 - `GET /api/readiness`는 오류를 내는 곳이 아니라 점검표를 보여 주는 곳이다. 같은 점검 함수를 `/chat/stream`도 내부에서 쓴다.
 - 알려진 한계: 저장 오류 상태에서 새로고침하면 `/chat/pending`이 비어 승인 화면이 사라진다(멈춤 지점이 아니라 "저장 직전"이라서). 다시 질문하면 된다.
 
+### D. 화면 쪽에서 보면 (CP3)
+- **프록시(`web_server.py`)가 왜 있나**: 화면 파일과 API를 같은 주소(:8600)에서 주면 브라우저 보안 규칙(다른 출처 요청 제한)을 신경 쓸 필요가 없다. 프록시는 받은 요청을 :8100으로 그대로 넘기고, SSE는 **모아 두지 않고 한 줄씩 바로** 흘려보낸다(모아 두면 진행 단계가 끝에 한꺼번에 뜬다 — 강의 p.114).
+- **서버가 꺼져 있으면**: 프록시가 `BACKEND_UNAVAILABLE`("서버에 연결할 수 없어요")을 돌려준다.
+- **타임라인**: 화면은 SSE 이벤트의 `type`을 보고 단계를 그린다 — `RouteDecided`=분류, `EvidenceSearched`=근거 검색(실패면 표시), `CardDrafted`=초안, `ReviewDone`=검수(위반 목록), `ApprovalRequired`=카드+승인 버튼, `ErrorRaised`=오류 상자. `[DONE]`을 받으면 연결을 직접 닫는다(안 닫으면 브라우저가 자동 재연결해 같은 질문을 다시 보낸다).
+- **MOCK 모드(`MOCK=1`)**: 백엔드 없이 `contracts/fixtures`의 미리 만든 응답·이벤트를 재생한다. A4가 A1~A3를 기다리지 않고 화면을 만들 수 있었던 이유(계약 우선).
+
 ## 5. 코드 위치 (궁금할 때 열어 볼 곳)
 
 | 단계 | 파일 |
@@ -90,6 +96,17 @@
 | 카드 저장·복습 단계 | `agent/store.py` |
 | MCP 서버·RAG | `mcp_server.py`, `rag.py` |
 | 오류 코드 표 | `contracts/errors.py` |
+
+## 6-1. 직접 실행해 보기
+
+```bash
+cd skala-ai-miniproject
+bash sh/seed_sample.sh                 # 샘플 서류를 data/에 (한 번만)
+.venv/bin/python server.py             # 터미널 1: API 서버 :8100 (.env의 모델 사용)
+.venv/bin/python web_server.py         # 터미널 2: 화면 :8600 → 브라우저에서 http://localhost:8600
+MOCK=1 .venv/bin/python web_server.py  # (서버 없이 화면만 볼 때)
+```
+끄기: 각 터미널에서 Ctrl+C.
 
 ## 6. 용어집
 

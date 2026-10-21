@@ -144,6 +144,13 @@
 ## 운영 변경 (2026-10-21, 사용자 요청)
 - 리뷰 게이트 전에 Lead가 `doc/handoff/flow-guide.md`(사용자용 흐름 설명서)를 갱신하고, 질문은 그 문서로 답할 수 있게 낸다. 모르는 부분은 대화로 채우고 §7 Q&A에 누적
 
+## CP3 (2026-10-21 14:20~)
+- CP2 승인·push(`a5afe0a`). 사용률 5%(14:00 재설정 후)
+- feat/web 병합 `f0d6cc5`, 프록시 `BACKEND_UNAVAILABLE` 전환·ADR-0016 Accepted `e99ffde`
+- 통합 수정 `8791c81`: build_deps가 데이터 폴더 생성(없으면 서버 기동 실패했음), seed_sample.sh가 .env보다 명령의 COACH_DATA_DIR 우선(이전엔 .env가 덮어씀 → 샘플이 data/로 감, data/는 새로 생긴 폴더라 사용자 데이터와 섞이지 않음)
+- 실제 스택 E2E(프록시 :8600 경유, ollama qwen3:0.6b·qwen3.5:4b·nomic-embed-text): stream 7이벤트 → pending 복원 → resume 저장(C0001) → 재승인 409 → 카드함 1장. 첫 시도 성공
+- 사용자 브라우저 E2E 대기 (서버·프록시를 scratchpad e2e_data로 띄워 둠)
+
 ## 재개 순서 (14:00 이후)
 1. 사용률 확인
 2. ADR-0017·0018 판정 → 필요한 A1 수정 지시(라우터 None 처리, 새 턴 초기화) 또는 수용
