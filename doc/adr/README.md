@@ -26,6 +26,7 @@
 | [0019](0019-ollama-quality-model-qwen35-4b.md) | ollama 품질 모델을 qwen3.5:4b로 | Accepted | 2026-10-21 | Lead | |
 | [0020](0020-ollama-thinking-off-posting-rule-fallback.md) | ollama thinking 끄기, 공고 정리 규칙 기반 대안, 복습 시 최근 카드 | Accepted | 2026-10-21 | Lead | |
 | [0021](0021-per-tool-call-limits.md) | Coach 검색 상한은 '검색 Tool 숨기기'로 (무한 반복 수정) | Accepted | 2026-10-21 | Lead | |
+| [0022](0022-eval-only-requirements.md) | 노트북 도구는 평가 전용 requirements-eval.txt로 | Accepted | 2026-10-21 | Lead | |
 
 ## design.md ↔ ADR 대응
 
