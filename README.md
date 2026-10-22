@@ -13,6 +13,10 @@ SKALA AI 미니프로젝트 — 10/13 CLI 에이전트("dapdap")를 FastAPI·SSE
 
 ## 구조
 
+![런타임 아키텍처](doc/images/arch-runtime.png)
+
+요청 흐름 요약:
+
 ```
 브라우저(Vue 3, 탭 ①준비 ②코치 ③카드) → web_server.py(:8600, 정적 서빙 + SSE 무버퍼 프록시)
   → server.py(:8100, FastAPI, lifespan에서 Deps 1회 조립)
