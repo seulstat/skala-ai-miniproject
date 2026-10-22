@@ -192,3 +192,8 @@
 ## 다음 시작점
 - CP0 승인·push 완료(2026-10-20, `0b29d58`). Day2 오전 각 worktree에서 kickoff-prompts.md로 A1·A2·A4 착수. 일정 압축 조정안은 [next-steps.md](next-steps.md) — 확정 시 ADR-0010·work-plan §7 갱신
 - 새 세션이 이어받을 때: "skala-ai-miniproject의 Lead다. agent.md, doc/handoff/lead-progress.md(특히 'A3 1차 검증'과 '재개 순서'), doc/handoff/api.md를 읽어라. CP1까지 통과·push됐고(main 4383825 이후), A1·A2는 main에 병합, A3(feat/api)·A4(feat/web)는 완료 후 미병합이다. 먼저 사용자에게 현재 사용률을 묻고 '재개 순서'대로 진행하라. 커밋에 AI 이름을 넣지 말 것."
+
+## 마무리 (2026-10-22)
+- 사용자: Canva 발표자료 반영·제출, GitHub 레포 public 전환·제출
+- 공개 전 이력 점검: `.env`·`data/`·키·연락처 패턴 없음. 첫 커밋의 `contracts/schemas.py` 예시 문구에 실제 활동명 1건 → 사용자 결정(A)으로 `git filter-branch`로 sample 라벨로 교체, 최종 트리 동일 확인 후 강제 push(`9a9488a` → `9d9d34f`). 원격 main 이력 매칭 0
+- 주의: 로컬 `feat/*` 브랜치·worktree에는 옛 이력이 남아 있음 — push하지 않는다
