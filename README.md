@@ -36,7 +36,7 @@ SKALA AI 미니프로젝트 — 10/13 CLI 에이전트("dapdap")를 FastAPI·SSE
 | DI | `Deps`를 lifespan에서 1회 조립해 노드에 주입 | `contracts/deps.py`, `agent/deps.py`, `server.py` |
 | HITL | `interrupt()` + `AsyncSqliteSaver`, 새로고침·재시작 후 복원 | `agent/graph.py`, `routers/chat.py` |
 | 오류 처리 | 4계층·재시도 가능 여부·코드별 메시지, timeout만 백오프 재시도 | `contracts/errors.py`, `agent/tools.py` |
-| LangSmith | 환경변수로 trace, 노드·MCP·LLM 계층 | `.env.example` |
+| LangSmith | `LANGSMITH_TRACING=true`로 trace — 질문 1건 12.05초·토큰 5,746·$0.001, 단계별 시간 ([실행 기록](doc/images/langsmith-trace.png)) | `.env.example` |
 | 모듈화·계약 | 역할 간 접점을 `contracts/`에 코드로 고정 | `contracts/` |
 | 단위테스트 | fake 모델·fake MCP, 네트워크 없음 (179개, 계약 테스트 43개 포함) | `tests/`, `check.sh` |
 
