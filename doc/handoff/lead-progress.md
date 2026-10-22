@@ -178,7 +178,7 @@
 - 사용자: .env를 OpenAI 3종으로 바꿔 브라우저 E2E 정상 확인, 캡처 3장(doc/images/e2e-1~3) + 아키텍처 PNG(doc/images/arch-runtime.png, archify 내보내기)
 - README 구조 절에 아키텍처 그림 추가, 발표 3번(실제 화면 2장)·4번(아키텍처+기술 요소) 슬라이드 교체
 - 질의응답용 새 세션 프롬프트: doc/handoff/qa-session-prompt.md
-- CP4 리뷰 게이트 답변 받음 → 보충 설명 후 승인 시 push
+- CP4 리뷰 게이트 답변 → 보충 설명 → **CP4 승인**(PPT는 CP4 범위 아님, G5 별도) → push
 
 ## 재개 순서 (14:00 이후)
 1. 사용률 확인
